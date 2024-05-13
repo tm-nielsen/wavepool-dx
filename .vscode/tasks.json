@@ -27,11 +27,11 @@
         "-o", "builds/web/index.html",
         "test.c",
         "-Os", "-Wall",
-        "C:/raylib-5.0_webassembly/lib/libraylib.a",
-        "-IC:/raylib-5.0_webassembly/include", "-L.",
+        "web_dependencies/lib/libraylib.a",
+        "-Iweb_dependencies/include", "-L.",
         "-s", "USE_GLFW=3",
         "-s", "ASYNCIFY",
-        "--shell-file", "C:/raylib-5.0_webassembly/minishell.html",
+        "--shell-file", "web_dependencies/minishell.html",
         "-DPLATFORM_WEB"
       ],
       "options": {
