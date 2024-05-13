@@ -4,10 +4,10 @@
     {
       "type": "cppbuild",
       "label": "build win64 project",
-      "command": "gcc",
+      "command": "g++",
       "args": [
         "-o", "builds/win64/a.exe",
-        "*.c",
+        "main.cpp",
         "-lraylib", "-lgdi32", "-lwinmm"
       ],
       "problemMatcher": [
@@ -22,10 +22,10 @@
     {
       "type": "cppbuild",
       "label": "build web project",
-      "command": "emcc",
+      "command": "em++",
       "args": [
         "-o", "builds/web/index.html",
-        "test.c",
+        "main.cpp",
         "-Os", "-Wall",
         "web_dependencies/lib/libraylib.a",
         "-Iweb_dependencies/include", "-L.",
