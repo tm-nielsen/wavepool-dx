@@ -1,0 +1,34 @@
+{
+  "configurations": [
+    {
+      "name": "Windows Build and Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/builds/win64/a.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/builds/win64",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          }
+      ],
+      "preLaunchTask": "build win64 project"
+    },
+    {
+      "name": "Web Build and Test",
+      "type": "firefox",
+      "request": "launch",
+      "reAttach": true,
+      "url": "http://localhost:8080",
+      "file": "${workspaceFolder}/builds/web/index.html",
+      "preLaunchTask": "build web project"
+    }
+  ]
+}
