@@ -4,7 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/raylib-5.0_webassembly/include",
+                "web_dependencies/include",
                 "C:/emsdk/upstream/emscripten/system/include/**"
             ],
             "defines": [
