@@ -1,13 +1,13 @@
 #include "raylib.h"
-#include "raymath.h"
-// #include <vector>
+#include "vec2.cpp"
+#include <functional>
 
 namespace wavepool {
   class WaveGrid
   {
     private:
-      Vector2 origin;
-      Vector2 spacing;
+      vec2 origin;
+      vec2 spacing;
 
       Color colour;
       float dotSize;
@@ -16,29 +16,37 @@ namespace wavepool {
       int columns;
 
     public:
-      WaveGrid(Vector2, Vector2, int, int, float, Color);
-      ~WaveGrid();
-
+      WaveGrid();
+      WaveGrid(vec2, vec2, int, int, float, Color);
       void DrawGrid();
+      void DrawWarpedGrid(std::function<vec2( vec2)>);
   };
   
-  WaveGrid::WaveGrid(Vector2 origin, Vector2 size, int columns, int rows, float dotSize, Color colour):
-    origin{origin}, rows{rows}, columns{columns}, colour{colour}, dotSize{dotSize}
+  WaveGrid::WaveGrid(): origin{vec2()}, rows{0}, columns{0}, dotSize{5}, colour{WHITE} {}
+  WaveGrid::WaveGrid(vec2 origin, vec2 size, int columns, int rows, float dotSize, Color colour):
+    origin{origin}, rows{rows}, columns{columns}, dotSize{dotSize}, colour{colour}
   {
-    spacing = Vector2{size.x / columns, size.y / rows};
-  }
-  
-  WaveGrid::~WaveGrid()
-  {
+    spacing = size / vec2(columns, rows);
   }
   
   void WaveGrid::DrawGrid()
   {
     for (int i = 0; i < columns; i++) {
       for (int j = 0; j < rows; j++) {
-        float x = i * spacing.x + origin.x;
-        float y = j * spacing.y + origin.y;
-        DrawCircle(x, y, dotSize, colour);
+        vec2 point = vec2(i, j) * spacing;
+        point += origin;
+        DrawCircle(point.x, point.y, dotSize, colour);
+      }
+    }
+  }
+  void WaveGrid::DrawWarpedGrid(std::function<vec2(vec2)> getOffset)
+  {
+    for (int i = 0; i < columns; i++) {
+      for (int j = 0; j < rows; j++) {
+        vec2 point = vec2(i, j) * spacing;
+        point += origin;
+        point += getOffset(point);
+        DrawCircle(point.x, point.y, dotSize, colour);
       }
     }
   }
