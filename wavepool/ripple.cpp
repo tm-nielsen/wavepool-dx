@@ -1,5 +1,6 @@
 #include <math.h>
 #include "vec2.cpp"
+#include "ripple_parameters.cpp"
 
 #ifndef PI
 #define PI 3.14159265359
@@ -15,7 +16,7 @@ namespace wavepool {
       float amplitude = 3;
       float speed = 200;
       float wavelength = 20;
-      float crestCount = 1;
+      int crestCount = 1;
       float lifetime = 1.5;
 
       vec2 origin;
@@ -35,6 +36,7 @@ namespace wavepool {
 
     public:
       Ripple(vec2, float);
+      Ripple(vec2, RippleParameters);
       void Update(float);
       void UpdateConstants();
       vec2 GetOffset(vec2);
@@ -45,6 +47,20 @@ namespace wavepool {
   Ripple::Ripple(vec2 origin, float radius):
     origin{origin}, startingRadius{radius}, radius{radius}
   {
+    strength = 1;
+    timer = 0;
+    isAlive = true;
+  }
+
+  Ripple::Ripple(vec2 origin, RippleParameters parameters):
+    origin{origin}, startingRadius{parameters.radius}, radius{parameters.radius}
+  {
+    amplitude = parameters.amplitude;
+    speed = parameters.speed;
+    wavelength = parameters.wavelength;
+    crestCount = parameters.crestCount;
+    lifetime = parameters.lifetime;
+
     strength = 1;
     timer = 0;
     isAlive = true;

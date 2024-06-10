@@ -1,38 +1,34 @@
 #include "raylib.h"
 #include <string>
 #include "wavepool/vec2.cpp"
-#include "wavepool/wave_pool.cpp"
+#include "wavepool/ripple_spawner.cpp"
 
 using namespace wavepool;
 
 int main(void)
 {
     // Initialization
-    vec2 screenSize = vec2(800, 450);
+    vec2 screenSize = vec2(800, 800);
     InitWindow(screenSize.x, screenSize.y, "raylib cpp test");
     SetTargetFPS(60);
 
-    WavePool wavePool = WavePool(screenSize, 20, 48, 27, 6, LIME);
+    WavePool wavePool = WavePool(screenSize, 20, 48, 48, 6, LIME);
 
-    float ripple_spawn_delay = 1.0 / 30;
-    float ripple_spawn_delay_timer = 0;
+    auto clickRippleParameters = RippleParameters(10, 6, 200, 30, 1, 3);
+    auto centreRippleParameters = RippleParameters(50, 30, 200, 50, 5, 5);
+    auto heldRippleParameters = RippleParameters(10, 3, 200, 20, 1, 1.5);
+    RippleSpawner rippleSpawner = RippleSpawner(&wavePool, clickRippleParameters, centreRippleParameters,
+        heldRippleParameters, screenSize, 30);
 
     // Main Game Loop
     while(!WindowShouldClose())
     {
         auto mousePosition = GetMousePosition();
 
-        ripple_spawn_delay_timer += GetFrameTime();
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-        {
-            if (ripple_spawn_delay_timer >= ripple_spawn_delay)
-            {
-                ripple_spawn_delay_timer -= ripple_spawn_delay;
-                wavePool.AddRipple(Ripple(vec2(mousePosition), 10));
-            }
-        }
-        else if (ripple_spawn_delay_timer > ripple_spawn_delay)
-            ripple_spawn_delay_timer = ripple_spawn_delay;
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            rippleSpawner.SpawnRipple(mousePosition);
+        else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+            rippleSpawner.SpawnHeldRipple(mousePosition);
         
         wavePool.Update();
 
