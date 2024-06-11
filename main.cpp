@@ -35,7 +35,7 @@ int main(void)
         BeginDrawing();
 
         ClearBackground(DARKGRAY);
-        radialInstrument.DrawGuides(GRAY, 2);
+        radialInstrument.DrawGuides(GRAY, 6);
         wavePool.Draw();
         DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
 

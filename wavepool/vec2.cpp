@@ -123,6 +123,11 @@ namespace wavepool {
       float Dot(vec2 v) {
         return x * v.x + y * v.y;
       }
+
+      Vector2 ToVector2()
+      {
+        return Vector2{x, y};
+      }
   };
 #endif
 };

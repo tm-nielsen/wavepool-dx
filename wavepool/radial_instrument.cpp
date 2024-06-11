@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "vec2.cpp"
+#include "rect.cpp"
 #include "ripple_spawner.cpp"
 
 namespace wavepool {
@@ -7,8 +8,10 @@ namespace wavepool {
     private:
       const int majorPitches [6] = {-9, -4, 0, 3, 5, 10};
       const int minorPitches [6] = {-10, -5, 0, 4, 5, 9};
+      const int toneCount = 4;
 
       RippleSpawner* rippleSpawner;
+      rect keyRects [5];
 
       Music staticAmbiance;
       Music majorAmbiance;
@@ -30,8 +33,7 @@ namespace wavepool {
       float GetPanning(vec2);
       void OnCentreClick();
       void OnRadialClick(vec2, vec2);
-      bool EllipseContains(vec2, vec2, vec2);
-      float EllipseContainsHelper(float, float, float);
+      void GenerateKeyRects(vec2, float);
 
     public:
       RadialInstrument(RippleSpawner*, vec2, float, float);
@@ -51,6 +53,8 @@ namespace wavepool {
     this->margin = margin;
     centre = screenSize / 2;
     outerRadius = centre.y;
+
+    GenerateKeyRects(screenSize, margin);
   }
 
   void RadialInstrument::LoadSounds()
@@ -131,8 +135,8 @@ namespace wavepool {
   void RadialInstrument::OnRadialClick(vec2 position, vec2 offset)
   {
     float angle = atan2(offset.y, offset.x) + PI;
-    int toneIndex = (int)(angle / TAU * 4);
-    if (toneIndex == 4)
+    int toneIndex = (int)(toneCount * angle / TAU);
+    if (toneIndex == toneCount)
       toneIndex--;
 
     Sound* tones = isMajor? majorTones: minorTones;
@@ -146,26 +150,22 @@ namespace wavepool {
   }
 
 
-  void RadialInstrument::DrawGuides(Color guideColor, float guideThickness)
+  void RadialInstrument::DrawGuides(Color guideColour, float guideThickness)
   {
-    DrawCircle(centre.x, centre.y, innerRadius, guideColor);
+    DrawPolyLinesEx(centre.ToVector2(), 8, innerRadius, 0, guideThickness, guideColour);
 
-    // vec2 radiiStep = (centre - vec2(innerRadius + margin))
-    for (int i = 0; i < 5; i++)
-    {
-      vec2 radii = vec2(innerRadius) + (centre - vec2(innerRadius + margin)) * float(i + 1) / 5;
-      DrawEllipseLines(centre.x, centre.y, radii.x, radii.y, guideColor);
-    }
+    for (rect pitchArea : keyRects)
+      pitchArea.Draw(guideThickness, guideColour);
 
-    float radialStep = TAU / 4;
-    for (int i = 0; i < 4; i++)
+    float radialStep = TAU / toneCount;
+    for (int i = 0; i < toneCount; i++)
     {
       float angle = i * radialStep;
       vec2 direction = vec2(cos(angle), sin(angle));
       direction = direction.Normalized();
-      vec2 lineStart = centre + direction * innerRadius;
+      vec2 lineStart = centre + direction * (innerRadius - guideThickness);
       vec2 lineEnd = centre + direction * outerRadius;
-      DrawLine(lineStart.x, lineStart.y, lineEnd.x, lineEnd.y, guideColor);
+      DrawLineEx(lineStart.ToVector2(), lineEnd.ToVector2(), guideThickness, guideColour);
     }
   }
 
@@ -173,14 +173,9 @@ namespace wavepool {
   float RadialInstrument::GetPitch(vec2 position)
   {
     int pitchIndex = 5;
-
-    vec2 radii = vec2(innerRadius);
-    vec2 radiiStep = (centre - radii - vec2(margin)) / 5;
-
-    while(pitchIndex > 0)
+    while (pitchIndex > 0)
     {
-      radii += radiiStep;
-      if (EllipseContains(centre, radii, position))
+      if (keyRects[pitchIndex - 1].ContainsPoint(position))
         break;
       pitchIndex--;
     }
@@ -189,27 +184,25 @@ namespace wavepool {
     return pow(2, semitones / 12.0);
   }
 
-  bool RadialInstrument::EllipseContains(vec2 origin, vec2 radii, vec2 point)
-  {
-    float x = EllipseContainsHelper(origin.x, point.x, radii.x);
-    float y = EllipseContainsHelper(origin.y, point.y, radii.y);
-
-    return x + y <= 1;
-  }
-
-  float RadialInstrument::EllipseContainsHelper(float origin, float point, float radius)
-  {
-    float result = point - origin;
-    result *= result;
-    result /= (radius * radius);
-    return result;
-  }
-
-
   float RadialInstrument::GetPanning(vec2 position)
   {
     float panning = (position.x - centre.x) / centre.x;
     float normalized_panning = Clamp((panning + 1) / 2, 0, 1);
     return normalized_panning;
+  }
+
+  void RadialInstrument::GenerateKeyRects(vec2 screenSize, float margin)
+  {
+    vec2 halfScreenSize = screenSize / 2;
+    vec2 rectOrigin = halfScreenSize - vec2(innerRadius);
+    vec2 rectSize = vec2(innerRadius) * 2;
+    rect baseRect = rect(rectOrigin, rectSize);
+    vec2 sizeIncrease = (halfScreenSize - vec2(innerRadius + margin)) / 6;
+
+    for (int i = 4; i >= 0; i--)
+    {
+      baseRect.GrowRadially(sizeIncrease);
+      keyRects[i] = rect(baseRect);
+    }
   }
 }
