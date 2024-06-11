@@ -1,5 +1,4 @@
 #include "raylib.h"
-#include <iostream>
 #include "vec2.cpp"
 #include "wave_pool.cpp"
 

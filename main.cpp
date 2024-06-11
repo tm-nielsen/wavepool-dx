@@ -9,19 +9,20 @@ int main(void)
 {
     // Initialization
     vec2 screenSize = vec2(800, 800);
+    float margin = 60;
     InitWindow(screenSize.x, screenSize.y, "raylib cpp test");
     SetTargetFPS(60);
     InitAudioDevice();
 
-    WavePool wavePool = WavePool(screenSize, 20, 48, 48, 6, LIME);
+    WavePool wavePool = WavePool(screenSize, margin, 48, 48, 6, LIME);
 
     auto clickRippleParameters = RippleParameters(10, 6, 200, 30, 1, 3);
-    auto centreRippleParameters = RippleParameters(50, 30, 200, 50, 5, 5);
+    auto centreRippleParameters = RippleParameters(20, 30, 200, 40, 5, 5);
     auto heldRippleParameters = RippleParameters(10, 3, 200, 20, 1, 1.5);
     RippleSpawner rippleSpawner = RippleSpawner(&wavePool, clickRippleParameters, centreRippleParameters,
         heldRippleParameters, screenSize, 30);
 
-    RadialInstrument radialInstrument= RadialInstrument(&rippleSpawner, screenSize, 100, 20);
+    RadialInstrument radialInstrument= RadialInstrument(&rippleSpawner, screenSize, 100, margin);
     radialInstrument.LoadSounds();
     
 
