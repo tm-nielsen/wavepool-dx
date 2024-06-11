@@ -18,7 +18,7 @@ namespace wavepool {
     public:
       RippleSpawner(WavePool*, RippleParameters, RippleParameters, RippleParameters, vec2, float);
       void SpawnCentreRipple();
-      void SpawnRipple(vec2);
+      void SpawnRipple(vec2, float);
       void SpawnHeldRipple(vec2);
   };
 
@@ -40,9 +40,9 @@ namespace wavepool {
     wavePool->AddRipple(Ripple(centre_position, centreRippleParameters));
   }
 
-  void RippleSpawner::SpawnRipple(vec2 spawnPosition)
+  void RippleSpawner::SpawnRipple(vec2 spawnPosition, float pitchScale = 1)
   {
-    wavePool->AddRipple(Ripple(spawnPosition, clickRippleParameters));
+    wavePool->AddRipple(Ripple(spawnPosition, clickRippleParameters, pitchScale));
   }
 
   void RippleSpawner::SpawnHeldRipple(vec2 spawnPosition)

@@ -36,7 +36,7 @@ namespace wavepool {
 
     public:
       Ripple(vec2, float);
-      Ripple(vec2, RippleParameters);
+      Ripple(vec2, RippleParameters, float);
       void Update(float);
       void UpdateConstants();
       vec2 GetOffset(vec2);
@@ -52,12 +52,12 @@ namespace wavepool {
     isAlive = true;
   }
 
-  Ripple::Ripple(vec2 origin, RippleParameters parameters):
+  Ripple::Ripple(vec2 origin, RippleParameters parameters, float pitchScale = 1):
     origin{origin}, startingRadius{parameters.radius}, radius{parameters.radius}
   {
-    amplitude = parameters.amplitude;
+    amplitude = parameters.amplitude / pitchScale;
     speed = parameters.speed;
-    wavelength = parameters.wavelength;
+    wavelength = parameters.wavelength / pitchScale;
     crestCount = parameters.crestCount;
     lifetime = parameters.lifetime;
 

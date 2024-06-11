@@ -138,10 +138,11 @@ namespace wavepool {
     Sound* tones = isMajor? majorTones: minorTones;
     Sound tone = Sound(tones[toneIndex]);
     SetSoundPan(tone, GetPanning(position));
-    SetSoundPitch(tone, GetPitch(position));
+    float pitchScale = GetPitch(position);
+    SetSoundPitch(tone, pitchScale);
 
     PlaySound(tone);
-    rippleSpawner->SpawnRipple(position);
+    rippleSpawner->SpawnRipple(position, pitchScale);
   }
 
 
