@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include <string>
 #include "wavepool/vec2.cpp"
-#include "wavepool/ripple_spawner.cpp"
+#include "wavepool/radial_instrument.cpp"
 
 using namespace wavepool;
 
@@ -11,6 +11,7 @@ int main(void)
     vec2 screenSize = vec2(800, 800);
     InitWindow(screenSize.x, screenSize.y, "raylib cpp test");
     SetTargetFPS(60);
+    InitAudioDevice();
 
     WavePool wavePool = WavePool(screenSize, 20, 48, 48, 6, LIME);
 
@@ -20,27 +21,28 @@ int main(void)
     RippleSpawner rippleSpawner = RippleSpawner(&wavePool, clickRippleParameters, centreRippleParameters,
         heldRippleParameters, screenSize, 30);
 
+    RadialInstrument radialInstrument= RadialInstrument(&rippleSpawner, screenSize, 100, 20);
+    radialInstrument.LoadSounds();
+    
+
     // Main Game Loop
     while(!WindowShouldClose())
-    {
-        auto mousePosition = GetMousePosition();
-
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            rippleSpawner.SpawnRipple(mousePosition);
-        else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-            rippleSpawner.SpawnHeldRipple(mousePosition);
-        
+    {        
+        radialInstrument.Update();
         wavePool.Update();
 
         BeginDrawing();
 
         ClearBackground(DARKGRAY);
+        radialInstrument.DrawGuides(GRAY, 2);
         wavePool.Draw();
         DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
 
         EndDrawing();
     }
     // De-Initialization
+    radialInstrument.UnloadSounds();
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }
