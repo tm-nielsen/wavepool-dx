@@ -11,22 +11,32 @@ namespace wavepool {
 
       Color colour;
       float dotSize;
+      float separation;
 
       int columns;
       int rows;
 
     public:
       WaveGrid();
-      WaveGrid(vec2, vec2, int, int, float, Color);
+      WaveGrid(vec2, vec2, float, float, Color);
       void DrawGrid();
-      void DrawWarpedGrid(std::function<vec2( vec2)>);
+      void DrawWarpedGrid(std::function<vec2(vec2)>);
+      void UpdateGridSize(vec2);
   };
   
-  WaveGrid::WaveGrid(): origin{vec2()}, colour{WHITE}, dotSize{5}, columns{0}, rows{0} {}
-  WaveGrid::WaveGrid(vec2 origin, vec2 size, int columns, int rows, float dotSize, Color colour):
-    origin{origin}, colour{colour}, dotSize{dotSize}, columns{columns}, rows{rows}
+  WaveGrid::WaveGrid(): origin{vec2()}, colour{WHITE}, dotSize{5}, separation{10}, columns{0}, rows{0} {}
+  WaveGrid::WaveGrid(vec2 origin, vec2 size, float separation, float dotSize, Color colour):
+    origin{origin}, colour{colour}, separation{separation}, dotSize{dotSize}
   {
-    spacing = size / vec2(columns, rows);
+    UpdateGridSize(size);
+  }
+
+  void WaveGrid::UpdateGridSize(vec2 newSize)
+  {
+    columns = newSize.x / separation;
+    rows = newSize.y / separation;
+
+    spacing = newSize / vec2(columns, rows);
   }
   
   void WaveGrid::DrawGrid()

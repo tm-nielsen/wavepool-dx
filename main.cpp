@@ -17,7 +17,7 @@ int main(void)
     InitAudioDevice();
     SetTargetFPS(60);
 
-    WavePool wavePool = WavePool(screenSize, margin, 48, 48, 6, LIME);
+    WavePool wavePool = WavePool(screenSize, margin, 6, 16, LIME);
 
     auto clickRippleParameters = RippleParameters(10, 6, 200, 30, 1, 3);
     auto centreRippleParameters = RippleParameters(20, 30, 200, 40, 5, 5);
@@ -36,6 +36,7 @@ int main(void)
         {
             vec2 newScreenSize = vec2(GetScreenWidth(), GetScreenHeight());
             radialInstrument.OnWindowResized(newScreenSize);
+            wavePool.OnWindowResized(newScreenSize);
         }
 
         radialInstrument.Update();

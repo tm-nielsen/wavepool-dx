@@ -15,20 +15,26 @@ namespace wavepool {
       const std::function<vec2(vec2)> getOffset = [this](vec2 point) -> vec2 {return GetOffset(point);};
       vec2 GetOffset(vec2);
 
+      float margin;
+      float dotRadius;
+      float dotSpacing;
+
     public:
-      WavePool(vec2, int, int, int, float, Color);
+      WavePool(vec2, float, float, float, Color);
       ~WavePool();
       void Update();
       void RemoveDeadRipples();
+      void OnWindowResized(vec2);
       void Draw();
       void AddRipple(Ripple);
   };
 
-  WavePool::WavePool(vec2 screenSize, int margin, int columns, int rows, float dotRadius, Color dotColour)
+  WavePool::WavePool(vec2 screenSize, float margin, float dotRadius, float dotSpacing, Color dotColour):
+    margin{margin}, dotRadius{dotRadius}, dotSpacing{dotSpacing}
   {
     vec2 gridOrigin = vec2(margin) + dotRadius;
-    vec2 gridSize = screenSize - margin * 2;
-    waveGrid = WaveGrid(gridOrigin, gridSize, columns, rows, dotRadius, dotColour);
+    waveGrid = WaveGrid(gridOrigin, vec2(), dotSpacing, dotRadius, dotColour);
+    OnWindowResized(screenSize);
   }
 
   WavePool::~WavePool()
@@ -58,6 +64,11 @@ namespace wavepool {
         ripples.pop_back();
       }
     }
+  }
+
+  void WavePool::OnWindowResized(vec2 screenSize)
+  {
+    waveGrid.UpdateGridSize(screenSize - margin * 2);
   }
 
   void WavePool::Draw()
