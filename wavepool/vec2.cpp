@@ -98,6 +98,13 @@ namespace wavepool {
         return *this;
       }
 
+      bool operator==(vec2 v) {
+        return x == v.x && y == v.y;
+      }
+      bool operator!=(vec2 v) {
+        return x != v.x || y != v.y;
+      }
+
       vec2 Normalized() {
         float length = Length();
         if (length == 0) return *this;
@@ -124,8 +131,13 @@ namespace wavepool {
         return x * v.x + y * v.y;
       }
 
-      Vector2 ToVector2()
-      {
+      float GetLargestComponent() {
+        if (x > y)
+          return x;
+        return y;
+      }
+
+      Vector2 ToVector2() {
         return Vector2{x, y};
       }
   };

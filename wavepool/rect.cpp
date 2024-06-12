@@ -29,26 +29,22 @@ namespace wavepool {
         return *this;
       }
 
-      bool ContainsPoint(vec2 point)
-      {
+      bool ContainsPoint(vec2 point) {
         vec2 limit = origin + size;
         return point.x > origin.x && point.y > origin.y
           && point.x < limit.x && point.y < limit.y;
       }
 
-      void GrowRadially(vec2 sizeIncrease)
-      {
+      void GrowRadially(vec2 sizeIncrease) {
         origin -= sizeIncrease;
         size += sizeIncrease * 2;
       }
 
-      void Draw(float thickness, Color colour)
-      {
+      void Draw(float thickness, Color colour) {
         DrawRectangleLinesEx(ToRectangle(), thickness, colour);
       }
 
-      Rectangle ToRectangle()
-      {
+      Rectangle ToRectangle() {
         return Rectangle{origin.x, origin.y, size.x, size.y};
       }
   };

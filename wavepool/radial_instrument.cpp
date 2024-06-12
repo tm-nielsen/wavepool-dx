@@ -24,7 +24,6 @@ namespace wavepool {
 
       vec2 centre;
       float margin;
-      float outerRadius;
       float innerRadius;
 
       bool isMajor;
@@ -34,12 +33,14 @@ namespace wavepool {
       void OnCentreClick();
       void OnRadialClick(vec2, vec2);
       void GenerateKeyRects(vec2, float);
+      Music InitializeMusicStream(const char*, float);
 
     public:
       RadialInstrument(RippleSpawner*, vec2, float, float);
       void LoadSounds();
       void UnloadSounds();
       void Update();
+      void OnWindowResized(vec2);
       void DrawGuides(Color, float);
       void OnClick(vec2);
   };
@@ -49,22 +50,16 @@ namespace wavepool {
   {
     isMajor = true;
 
-    this->innerRadius = innerRadius;
     this->margin = margin;
-    centre = screenSize / 2;
-    outerRadius = centre.y;
 
-    GenerateKeyRects(screenSize, margin);
+    OnWindowResized(screenSize);
   }
 
   void RadialInstrument::LoadSounds()
   {
-    staticAmbiance = LoadMusicStream("resources/Ambiance/WavegameAmbienceStaticStereo.ogg");
-    staticAmbiance.looping = true;
-    majorAmbiance = LoadMusicStream("resources/Ambiance/WavegameAmbianceMajorStereo.ogg");
-    majorAmbiance.looping = true;
-    minorAmbiance = LoadMusicStream("resources/Ambiance/WavegameAmbianceMinorStereo.ogg");
-    minorAmbiance.looping = true;
+    staticAmbiance = InitializeMusicStream("resources/Ambiance/WavegameAmbienceStaticStereo.ogg", 0.1);
+    majorAmbiance = InitializeMusicStream("resources/Ambiance/WavegameAmbianceMajorStereo.ogg", 0.35);
+    minorAmbiance = InitializeMusicStream("resources/Ambiance/WavegameAmbianceMinorStereo.ogg", 0.35);
 
     PlayMusicStream(staticAmbiance);
     currentAmbiance = &majorAmbiance;
@@ -81,6 +76,14 @@ namespace wavepool {
     minorTones[3] = LoadSound("resources/Pings/MinorSets/MinorWaveD.ogg");
 
     switchTone = LoadSound("resources/Ambiance/WavegamePingSplashZone.ogg");
+  }
+
+  Music RadialInstrument::InitializeMusicStream(const char *path, float volume = 1)
+  {
+    Music musicStream = LoadMusicStream(path);
+    musicStream.looping = true;
+    SetMusicVolume(musicStream, volume);
+    return musicStream;
   }
 
   void RadialInstrument::UnloadSounds()
@@ -110,6 +113,14 @@ namespace wavepool {
   }
 
 
+  void RadialInstrument::OnWindowResized(vec2 screenSize)
+  {
+    centre = screenSize / 2;
+    innerRadius = screenSize.GetLargestComponent() / 12;
+    GenerateKeyRects(screenSize, margin);
+  }
+
+
   void RadialInstrument::OnClick(vec2 position)
   {
     vec2 offset = position - centre;
@@ -124,7 +135,7 @@ namespace wavepool {
   void RadialInstrument::OnCentreClick()
   {
     PlaySound(switchTone);
-    rippleSpawner->SpawnCentreRipple();
+    rippleSpawner->SpawnCentreRipple(centre);
 
     isMajor = !isMajor;
     StopMusicStream(*currentAmbiance);
@@ -152,7 +163,7 @@ namespace wavepool {
 
   void RadialInstrument::DrawGuides(Color guideColour, float guideThickness)
   {
-    DrawPolyLinesEx(centre.ToVector2(), 8, innerRadius, 0, guideThickness, guideColour);
+    DrawPolyLinesEx(centre.ToVector2(), 12, innerRadius, 0, guideThickness, guideColour);
 
     for (rect pitchArea : keyRects)
       pitchArea.Draw(guideThickness, guideColour);
@@ -164,7 +175,7 @@ namespace wavepool {
       vec2 direction = vec2(cos(angle), sin(angle));
       direction = direction.Normalized();
       vec2 lineStart = centre + direction * (innerRadius - guideThickness);
-      vec2 lineEnd = centre + direction * outerRadius;
+      vec2 lineEnd = centre + direction * centre;
       DrawLineEx(lineStart.ToVector2(), lineEnd.ToVector2(), guideThickness, guideColour);
     }
   }
@@ -197,12 +208,27 @@ namespace wavepool {
     vec2 rectOrigin = halfScreenSize - vec2(innerRadius);
     vec2 rectSize = vec2(innerRadius) * 2;
     rect baseRect = rect(rectOrigin, rectSize);
-    vec2 sizeIncrease = (halfScreenSize - vec2(innerRadius + margin)) / 6;
+    vec2 sizeIncrease = (rectOrigin - vec2(margin)) / 5;
+
+    if (screenSize.x > screenSize.y * 1.5)
+    {
+      baseRect.origin.y = -10;
+      baseRect.size.y = screenSize.y + 20;
+      sizeIncrease.y = 0;
+    }
+    else if (screenSize.y > screenSize.x * 1.5)
+    {
+      baseRect.origin.x = -10;
+      baseRect.size.x = screenSize.x + 20;
+      sizeIncrease.x = 0;
+    }
+    else
+      baseRect.GrowRadially(sizeIncrease / 2);
 
     for (int i = 4; i >= 0; i--)
     {
-      baseRect.GrowRadially(sizeIncrease);
       keyRects[i] = rect(baseRect);
+      baseRect.GrowRadially(sizeIncrease);
     }
   }
 }

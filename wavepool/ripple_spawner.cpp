@@ -10,34 +10,31 @@ namespace wavepool {
       RippleParameters centreRippleParameters;
 
       WavePool* wavePool;
-      vec2 centre_position;
 
       float heldRippleSpawnDelay;
       double lastHeldRippleSpawnTime;
 
     public:
-      RippleSpawner(WavePool*, RippleParameters, RippleParameters, RippleParameters, vec2, float);
-      void SpawnCentreRipple();
+      RippleSpawner(WavePool*, RippleParameters, RippleParameters, RippleParameters, float);
+      void SpawnCentreRipple(vec2);
       void SpawnRipple(vec2, float);
       void SpawnHeldRipple(vec2);
   };
 
   RippleSpawner::RippleSpawner(WavePool* wavePool, RippleParameters clickRippleParameters,
-      RippleParameters centreRippleParameters, RippleParameters heldRippleParameters,
-      vec2 screenSize, float heldRippleSpawnRate)
+      RippleParameters centreRippleParameters,
+      RippleParameters heldRippleParameters, float heldRippleSpawnRate)
   {
     this->wavePool = wavePool;
     this->clickRippleParameters = clickRippleParameters;
     this->centreRippleParameters = centreRippleParameters;
     this->heldRippleParameters = heldRippleParameters;
-
-    centre_position = screenSize / 2;
     heldRippleSpawnDelay = 1.0 / heldRippleSpawnRate;
   }
 
-  void RippleSpawner::SpawnCentreRipple()
+  void RippleSpawner::SpawnCentreRipple(vec2 centrePosition)
   {
-    wavePool->AddRipple(Ripple(centre_position, centreRippleParameters));
+    wavePool->AddRipple(Ripple(centrePosition, centreRippleParameters));
   }
 
   void RippleSpawner::SpawnRipple(vec2 spawnPosition, float pitchScale = 1)
