@@ -23,9 +23,9 @@ namespace settings {
     float dotSize = 6;
     float dotSpacing = 16;
 
-    Color backgroundColour = utils::GetColourFromString("96c9dc");
-    Color guideColour = utils::GetColourFromString("61a0af");
-    Color mainColour = utils::GetColourFromString("#f5d491");
+    Color backgroundColour = utils::GetColourFromString("#3e6990cc");
+    Color guideColour = utils::GetColourFromString("#000000dd");
+    Color mainColour = utils::GetColourFromString("#c0fdfb");
 
 
     void SaveToFile(const char* path = SAVE_PATH)
