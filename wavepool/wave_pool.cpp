@@ -16,8 +16,6 @@ namespace wavepool {
       vec2 GetOffset(vec2);
 
       float margin;
-      float dotRadius;
-      float dotSpacing;
 
     public:
       WavePool(vec2, float, float, float, Color);
@@ -30,8 +28,9 @@ namespace wavepool {
   };
 
   WavePool::WavePool(vec2 screenSize, float margin, float dotRadius, float dotSpacing, Color dotColour):
-    margin{margin}, dotRadius{dotRadius}, dotSpacing{dotSpacing}
+    margin{margin}
   {
+    this->margin = margin;
     vec2 gridOrigin = vec2(margin) + dotRadius;
     waveGrid = WaveGrid(gridOrigin, vec2(), dotSpacing, dotRadius, dotColour);
     OnWindowResized(screenSize);

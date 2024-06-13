@@ -32,6 +32,8 @@
         "-s", "USE_GLFW=3",
         "-s", "ASYNCIFY",
         "--shell-file", "web_dependencies/minishell.html",
+        "--embed-file", "resources",
+        "-sALLOW_MEMORY_GROWTH",
         "-DPLATFORM_WEB"
       ],
       "options": {
