@@ -2,6 +2,7 @@
 #include <string>
 #include "utils/vec2.cpp"
 #include "wavepool/radial_instrument.cpp"
+#include "settings/settings_menu.cpp"
 #include "settings/settings.cpp"
 
 using namespace wavepool;
@@ -27,6 +28,8 @@ int main(void)
 
 
     Rectangle backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
+    SettingsMenu settingsMenu = SettingsMenu(screenSize, margin);
+    settingsMenu.SetStyle(settings.guideColour, settings.mainColour, 6);
 
     WavePool wavePool = WavePool(screenSize, margin,
         settings.dotSize, settings.dotSpacing, settings.mainColour);
@@ -47,16 +50,25 @@ int main(void)
             wavePool.OnWindowResized(newScreenSize);
         }
 
-        radialInstrument.Update();
-        wavePool.Update();
+        settingsMenu.Update();
+        if (!settingsMenu.isOpen)
+        {
+            radialInstrument.Update();
+            wavePool.Update();
+        }
 
         BeginDrawing();
 
         ClearBackground(BLANK);
         DrawRectangleRounded(backgroundRect, 0.075, 6, settings.backgroundColour);
-        radialInstrument.DrawGuides(settings.guideColour, 6);
-        wavePool.Draw();
-        DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
+
+        settingsMenu.Draw();
+        if (!settingsMenu.isOpen)
+        {
+            radialInstrument.DrawGuides(settings.guideColour, 6);
+            wavePool.Draw();
+            DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
+        }
 
         EndDrawing();
     }
