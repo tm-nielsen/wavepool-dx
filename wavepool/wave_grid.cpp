@@ -28,13 +28,15 @@ namespace wavepool {
   
   WaveGrid::WaveGrid(): origin{vec2()}, colour{WHITE}, dotSize{5}, separation{10}, columns{0}, rows{0} {}
   WaveGrid::WaveGrid(vec2 origin, vec2 size, float separation, float dotSize, Color colour):
-    origin{origin}, colour{colour}, dotSize{dotSize}, separation{separation}
+    colour{colour}, dotSize{dotSize}, separation{separation}
   {
+    this->origin = origin + dotSize;
     UpdateGridSize(size);
   }
 
   void WaveGrid::UpdateGridSize(vec2 newSize)
   {
+    newSize -= dotSize;
     columns = newSize.x / separation;
     rows = newSize.y / separation;
 
