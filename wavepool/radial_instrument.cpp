@@ -175,7 +175,7 @@ namespace wavepool {
     else if (IsVerticallyFlat())
       centralKeyRect.DrawVerticalBorders(thickness, colour);
     else
-      centralKeyRect.DrawRounded(thickness, colour, 0.075, 4);
+      centralKeyRect.DrawRounded(thickness, colour);
 
     for (rect keyRect : keyRects)
     {
@@ -184,7 +184,7 @@ namespace wavepool {
       else if (IsVerticallyFlat())
         keyRect.DrawHorizontalBorders(thickness, colour);
       else
-        keyRect.DrawRounded(thickness, colour, 0.075, 4);
+        keyRect.DrawRounded(thickness, colour);
     }
 
     float radialStep = TAU / toneCount;

@@ -44,7 +44,7 @@ namespace utils {
         DrawRectangleLinesEx(ToRectangle(), thickness, colour);
       }
 
-      void DrawRounded(float thickness, Color colour, float roundness, int segments)
+      void DrawRounded(float thickness, Color colour, float roundness = 0.075, int segments = 4)
       {
         DrawRectangleRoundedLines(ToRectangle(), roundness, segments, thickness, colour);
       }
