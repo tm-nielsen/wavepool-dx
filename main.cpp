@@ -2,23 +2,28 @@
 #include <string>
 #include "utils/vec2.cpp"
 #include "wavepool/radial_instrument.cpp"
+#include "settings/settings.cpp"
 
 using namespace wavepool;
+using namespace settings;
 using namespace utils;
 
 int main(void)
 {
     // Initialization
-    const vec2 screenSize = vec2(800, 800);
-    const float margin = 40;
+    Settings settings = Settings::LoadFromFile();
+    vec2 screenSize = vec2(settings.windowWidth, settings.windowHeight);
+    float margin = settings.margin;
 
     InitWindow(screenSize.x, screenSize.y, "raylib cpp test");
-    SetWindowMinSize(600, 600);
+    SetWindowMinSize(500, 500);
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     InitAudioDevice();
+    SetMasterVolume(settings.volume);
     SetTargetFPS(60);
 
-    WavePool wavePool = WavePool(screenSize, margin, 6, 16, LIME);
+    WavePool wavePool = WavePool(screenSize, margin,
+        settings.dotSize, settings.dotSpacing, settings.mainColour);
 
     auto clickRippleParameters = RippleParameters(10, 6, 200, 30, 1, 3);
     auto centreRippleParameters = RippleParameters(20, 30, 200, 40, 5, 5);
@@ -45,8 +50,8 @@ int main(void)
 
         BeginDrawing();
 
-        ClearBackground(DARKGRAY);
-        radialInstrument.DrawGuides(GRAY, 6);
+        ClearBackground(settings.backgroundColour);
+        radialInstrument.DrawGuides(settings.guideColour, 6);
         wavePool.Draw();
         DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
 

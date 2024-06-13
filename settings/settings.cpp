@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include "../utils/file_utils.cpp"
-#include <cstring>
 
 namespace settings {
   #define SAVE_PATH "settings.txt"
