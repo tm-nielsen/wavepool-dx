@@ -1,5 +1,5 @@
 #include <math.h>
-#include "vec2.cpp"
+#include "../utils/vec2.cpp"
 #include "ripple_parameters.cpp"
 
 #ifndef PI
@@ -10,6 +10,8 @@
 #endif
 
 namespace wavepool {
+  using namespace utils;
+
   class Ripple
   {
     private:

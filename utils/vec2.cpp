@@ -1,7 +1,7 @@
 #include <math.h>
 #include "raymath.h"
 
-namespace wavepool {
+namespace utils {
 #ifndef VEC_2
 #define VEC_2
   struct vec2

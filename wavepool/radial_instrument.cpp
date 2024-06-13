@@ -1,9 +1,11 @@
 #include "raylib.h"
-#include "vec2.cpp"
-#include "rect.cpp"
+#include "../utils/vec2.cpp"
+#include "../utils/rect.cpp"
 #include "ripple_spawner.cpp"
 
 namespace wavepool {
+  using namespace utils;
+
   class RadialInstrument {
     private:
       const int majorPitches [6] = {-9, -4, 0, 3, 5, 10};

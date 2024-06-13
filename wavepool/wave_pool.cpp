@@ -1,11 +1,13 @@
 #include "raylib.h"
 #include <vector>
 #include <functional>
-#include "vec2.cpp"
+#include "../utils/vec2.cpp"
 #include "wave_grid.cpp"
 #include "ripple.cpp"
 
 namespace wavepool {
+  using namespace utils;
+
   class WavePool
   {
     private:

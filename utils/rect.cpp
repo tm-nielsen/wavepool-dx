@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "vec2.cpp"
 
-namespace wavepool {
+namespace utils {
 #ifndef RECT
 #define RECT
   struct rect

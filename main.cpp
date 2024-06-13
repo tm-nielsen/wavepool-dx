@@ -1,9 +1,10 @@
 #include "raylib.h"
 #include <string>
-#include "wavepool/vec2.cpp"
+#include "utils/vec2.cpp"
 #include "wavepool/radial_instrument.cpp"
 
 using namespace wavepool;
+using namespace utils;
 
 int main(void)
 {

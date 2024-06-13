@@ -1,8 +1,10 @@
 #include "raylib.h"
-#include "vec2.cpp"
+#include "../utils/vec2.cpp"
 #include "wave_pool.cpp"
 
 namespace wavepool {
+  using namespace utils;
+
   class RippleSpawner {
     private:
       RippleParameters clickRippleParameters;

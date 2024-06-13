@@ -1,8 +1,10 @@
 #include "raylib.h"
-#include "vec2.cpp"
+#include "../utils/vec2.cpp"
 #include <functional>
 
 namespace wavepool {
+  using namespace utils;
+
   class WaveGrid
   {
     private:
