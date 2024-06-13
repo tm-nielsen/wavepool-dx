@@ -9,10 +9,14 @@ namespace utils {
   {
     if (hexString[0] == '#')
       hexString.erase(0, 1);
+    if (hexString.length() == 6)
+      hexString += "ff";
+
     unsigned int hexValue;
     std::stringstream ss;
     ss << std::hex << hexString;
     ss >> hexValue;
+
     return GetColor(hexValue);
   }
 
