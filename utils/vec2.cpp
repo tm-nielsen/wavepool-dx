@@ -143,6 +143,16 @@ namespace utils {
         return y;
       }
 
+      vec2 RotatedAroundPoint(vec2 anchorPoint, float rotationDegrees) {
+        vec2 offset = *this - anchorPoint;
+        return anchorPoint + offset.Rotated(rotationDegrees);
+      }
+
+      vec2 Rotated(float rotationDegrees) {
+        float radians = rotationDegrees * PI / 180;
+        return vec2(x * cos(radians) - y * sin(radians), x * sin(radians) + y * cos(radians));
+      }
+
       Vector2 ToVector2() {
         return Vector2{x, y};
       }

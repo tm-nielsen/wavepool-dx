@@ -28,7 +28,9 @@ int main(void)
 
 
     Rectangle backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
+
     SettingsMenu settingsMenu = SettingsMenu(screenSize, margin);
+    settingsMenu.LoadResources();
     settingsMenu.SetStyle(settings.guideColour, settings.mainColour, 6);
 
     WavePool wavePool = WavePool(screenSize, margin,
@@ -73,6 +75,7 @@ int main(void)
         EndDrawing();
     }
     // De-Initialization
+    settingsMenu.UnloadResources();
     radialInstrument.UnloadSounds();
     CloseAudioDevice();
     CloseWindow();

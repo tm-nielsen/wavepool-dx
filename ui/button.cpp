@@ -25,7 +25,8 @@ namespace ui {
 
       Button();
       Button(vec2, vec2, std::function<void()>);
-      void LoadTextureFromFile(const char*);
+      void LoadResources(const char*);
+      void UnloadResources();
       void SetStyle(Color, Color, float, float);
       void Update(vec2);
       void Draw();
@@ -37,34 +38,46 @@ namespace ui {
     area{rect(origin, size)}, onClick{onClick} {}
 
 
-  void Button::LoadTextureFromFile(const char* texturePath) {
+  void Button::LoadResources(const char* texturePath)
+  {
     if (FileExists(texturePath))
       texture = LoadTexture(texturePath);
     else
-      texture = LoadTextureFromImage(GenImageColor(16, 16, BLANK));
+      texture = LoadTextureFromImage(GenImageColor(12, 12, BLANK));
     textureScale = area.size.y / texture.height;
   }
 
-  void Button::SetStyle(Color normal, Color hovered, float thickness, float rotation = 30) {
+  void Button::UnloadResources()
+  {
+    UnloadTexture(texture);
+  }
+
+  void Button::SetStyle(Color normal, Color hovered, float thickness, float rotation = -20)
+  {
     normalColour = normal;
     hoveredColour = hovered;
     borderThickness = thickness;
     hoverRotation = rotation;
   }
 
-  void Button::Update(vec2 mousePosition) {
+  void Button::Update(vec2 mousePosition)
+  {
     isHovered = area.ContainsPoint(mousePosition);
     if (isPressed && !IsMouseButtonDown(MOUSE_BUTTON_LEFT))
       onClick();
     isPressed = IsMouseButtonDown(MOUSE_BUTTON_LEFT) && isHovered;
 
     float targetRotation = isHovered? hoverRotation: 0;
-    textureRotation = Lerp(textureRotation, targetRotation, 0.01);
+    textureRotation = Lerp(textureRotation, targetRotation, 12 * GetFrameTime());
   }
 
-  void Button::Draw() {
+  void Button::Draw()
+  {
     Color colour = isHovered? hoveredColour : normalColour;
     area.DrawRounded(borderThickness, colour);
-    DrawTextureEx(texture, area.origin.ToVector2(), textureRotation, textureScale, colour);
+
+    vec2 centre = area.origin + area.size / 2;
+    vec2 texturePosition = area.origin.RotatedAroundPoint(centre, textureRotation);
+    DrawTextureEx(texture, texturePosition.ToVector2(), textureRotation, textureScale, colour);
   }
 }
