@@ -14,7 +14,7 @@ int main(void)
     Settings settings = Settings::LoadFromFile();
     vec2 screenSize = vec2(settings.windowWidth, settings.windowHeight);
     float margin = settings.margin;
-    Rectangle backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
+
 
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
     InitWindow(screenSize.x, screenSize.y, "Wave Pool");
@@ -25,14 +25,13 @@ int main(void)
     SetMasterVolume(settings.volume);
     SetTargetFPS(60);
 
+
+    Rectangle backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
+
     WavePool wavePool = WavePool(screenSize, margin,
         settings.dotSize, settings.dotSpacing, settings.mainColour);
 
-    auto clickRippleParameters = RippleParameters(10, 6, 200, 30, 1, 3);
-    auto centreRippleParameters = RippleParameters(20, 30, 200, 40, 5, 5);
-    auto heldRippleParameters = RippleParameters(10, 3, 200, 20, 1, 1.5);
-    RippleSpawner rippleSpawner = RippleSpawner(&wavePool, clickRippleParameters,
-        centreRippleParameters, heldRippleParameters, 30);
+    RippleSpawner rippleSpawner = RippleSpawner(&wavePool, 30);
 
     RadialInstrument radialInstrument= RadialInstrument(&rippleSpawner, screenSize, 100, margin);
     radialInstrument.LoadSounds();

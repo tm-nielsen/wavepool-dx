@@ -17,20 +17,18 @@ namespace wavepool {
       double lastHeldRippleSpawnTime;
 
     public:
-      RippleSpawner(WavePool*, RippleParameters, RippleParameters, RippleParameters, float);
+      RippleSpawner(WavePool*, float);
       void SpawnCentreRipple(vec2);
       void SpawnRipple(vec2, float);
       void SpawnHeldRipple(vec2);
   };
 
-  RippleSpawner::RippleSpawner(WavePool* wavePool, RippleParameters clickRippleParameters,
-      RippleParameters centreRippleParameters,
-      RippleParameters heldRippleParameters, float heldRippleSpawnRate)
+  RippleSpawner::RippleSpawner(WavePool* wavePool, float heldRippleSpawnRate)
   {
     this->wavePool = wavePool;
-    this->clickRippleParameters = clickRippleParameters;
-    this->centreRippleParameters = centreRippleParameters;
-    this->heldRippleParameters = heldRippleParameters;
+    clickRippleParameters = RippleParameters(10, 6, 200, 30, 1, 3);
+    centreRippleParameters = RippleParameters(20, 30, 200, 40, 5, 5);
+    heldRippleParameters = RippleParameters(10, 3, 200, 20, 1, 1.5);
     heldRippleSpawnDelay = 1.0 / heldRippleSpawnRate;
   }
 
