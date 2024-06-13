@@ -44,6 +44,30 @@ namespace utils {
         DrawRectangleLinesEx(ToRectangle(), thickness, colour);
       }
 
+      void DrawRounded(float thickness, Color colour, float roundness, int segments)
+      {
+        DrawRectangleRoundedLines(ToRectangle(), roundness, segments, thickness, colour);
+      }
+
+      void DrawHorizontalBorders(float thickness, Color colour) {
+        DrawParallelLines(origin, origin + size * RIGHT, size * DOWN, thickness, colour);
+      }
+
+      void DrawVerticalBorders(float thickness, Color colour) {
+        DrawParallelLines(origin, origin + size * DOWN, size * RIGHT, thickness, colour);
+      }
+
+      void DrawParallelLines(vec2 startPos, vec2 endPos, vec2 offset, float thickness, Color colour) {
+        DrawLine(startPos, endPos, thickness, colour);
+        startPos += offset;
+        endPos += offset;
+        DrawLine(startPos, endPos, thickness, colour);
+      }
+
+      void DrawLine(vec2 startPos, vec2 endPos, float thickness, Color colour) {
+        DrawLineEx(startPos.ToVector2(), endPos.ToVector2(), thickness, colour);
+      }
+
       Rectangle ToRectangle() {
         return Rectangle{origin.x, origin.y, size.x, size.y};
       }

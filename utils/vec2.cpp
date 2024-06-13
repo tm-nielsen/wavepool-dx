@@ -4,6 +4,12 @@
 namespace utils {
 #ifndef VEC_2
 #define VEC_2
+
+#define UP vec2(0, -1)
+#define DOWN vec2(0, 1)
+#define RIGHT vec2(1, 0)
+#define LEFT vec2(-1, 0)
+
   struct vec2
   {
     public:

@@ -13,6 +13,7 @@ namespace wavepool {
       const int toneCount = 4;
 
       RippleSpawner* rippleSpawner;
+      rect centralKeyRect;
       rect keyRects [5];
 
       Music staticAmbiance;
@@ -26,7 +27,7 @@ namespace wavepool {
 
       vec2 centre;
       float margin;
-      float innerRadius;
+      float centralKeyHalfWidth;
 
       bool isMajor;
       
@@ -35,6 +36,9 @@ namespace wavepool {
       void OnCentreClick();
       void OnRadialClick(vec2, vec2);
       void GenerateKeyRects(vec2, float);
+      bool IsFlat();
+      bool IsHorizontallyFlat();
+      bool IsVerticallyFlat();
       Music InitializeMusicStream(const char*, float);
 
     public:
@@ -118,7 +122,8 @@ namespace wavepool {
   void RadialInstrument::OnWindowResized(vec2 screenSize)
   {
     centre = screenSize / 2;
-    innerRadius = screenSize.GetLargestComponent() / 12;
+    centralKeyHalfWidth = screenSize.GetLargestComponent() / 12;
+    centralKeyRect = rect(centre - centralKeyHalfWidth, centralKeyHalfWidth * 2);
     GenerateKeyRects(screenSize, margin);
   }
 
@@ -128,7 +133,7 @@ namespace wavepool {
     vec2 offset = position - centre;
     float centre_distance = offset.Length();
 
-    if (centre_distance < innerRadius)
+    if (centralKeyRect.ContainsPoint(position))
       OnCentreClick();
     else
       OnRadialClick(position, offset);
@@ -163,12 +168,24 @@ namespace wavepool {
   }
 
 
-  void RadialInstrument::DrawGuides(Color guideColour, float guideThickness)
+  void RadialInstrument::DrawGuides(Color colour, float thickness)
   {
-    DrawPolyLinesEx(centre.ToVector2(), 12, innerRadius, 0, guideThickness, guideColour);
+    if (IsHorizontallyFlat())
+      centralKeyRect.DrawHorizontalBorders(thickness, colour);
+    else if (IsVerticallyFlat())
+      centralKeyRect.DrawVerticalBorders(thickness, colour);
+    else
+      centralKeyRect.DrawRounded(thickness, colour, 0.075, 4);
 
-    for (rect pitchArea : keyRects)
-      pitchArea.Draw(guideThickness, guideColour);
+    for (rect keyRect : keyRects)
+    {
+      if (IsHorizontallyFlat())
+        keyRect.DrawVerticalBorders(thickness, colour);
+      else if (IsVerticallyFlat())
+        keyRect.DrawHorizontalBorders(thickness, colour);
+      else
+        keyRect.DrawRounded(thickness, colour, 0.075, 4);
+    }
 
     float radialStep = TAU / toneCount;
     for (int i = 0; i < toneCount; i++)
@@ -176,9 +193,9 @@ namespace wavepool {
       float angle = i * radialStep;
       vec2 direction = vec2(cos(angle), sin(angle));
       direction = direction.Normalized();
-      vec2 lineStart = centre + direction * (innerRadius - guideThickness);
-      vec2 lineEnd = centre + direction * centre;
-      DrawLineEx(lineStart.ToVector2(), lineEnd.ToVector2(), guideThickness, guideColour);
+      vec2 lineStart = centre + direction * centralKeyHalfWidth;
+      vec2 lineEnd = centre + direction * (centre - margin);
+      DrawLineEx(lineStart.ToVector2(), lineEnd.ToVector2(), thickness, colour);
     }
   }
 
@@ -207,30 +224,43 @@ namespace wavepool {
   void RadialInstrument::GenerateKeyRects(vec2 screenSize, float margin)
   {
     vec2 halfScreenSize = screenSize / 2;
-    vec2 rectOrigin = halfScreenSize - vec2(innerRadius);
-    vec2 rectSize = vec2(innerRadius) * 2;
+    vec2 rectOrigin = halfScreenSize - centralKeyHalfWidth;
+    vec2 rectSize = centralKeyHalfWidth * 2;
     rect baseRect = rect(rectOrigin, rectSize);
-    vec2 sizeIncrease = (rectOrigin - vec2(margin)) / 5;
+    vec2 sizeIncrease = (rectOrigin - margin) / 5;
 
-    if (screenSize.x > screenSize.y * 1.5)
+    if (IsHorizontallyFlat())
     {
-      baseRect.origin.y = -10;
-      baseRect.size.y = screenSize.y + 20;
+      baseRect.origin.y = margin;
+      baseRect.size.y = screenSize.y - 2 * margin;
       sizeIncrease.y = 0;
     }
-    else if (screenSize.y > screenSize.x * 1.5)
+    else if (IsVerticallyFlat())
     {
-      baseRect.origin.x = -10;
-      baseRect.size.x = screenSize.x + 20;
+      baseRect.origin.x = margin;
+      baseRect.size.x = screenSize.x - 2 * margin;
       sizeIncrease.x = 0;
     }
     else
-      baseRect.GrowRadially(sizeIncrease / 2);
+    {
+      sizeIncrease *= 5 / 6.0;
+      baseRect.GrowRadially(sizeIncrease);
+    }
 
     for (int i = 4; i >= 0; i--)
     {
       keyRects[i] = rect(baseRect);
       baseRect.GrowRadially(sizeIncrease);
     }
+  }
+
+  bool RadialInstrument::IsFlat() {
+    return IsHorizontallyFlat() || IsVerticallyFlat();
+  }
+  bool RadialInstrument::IsHorizontallyFlat() {
+    return centre.x > centre.y * 1.3;
+  }
+  bool RadialInstrument::IsVerticallyFlat() {
+    return centre.y > centre.x * 1.3;
   }
 }
