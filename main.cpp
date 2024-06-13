@@ -14,10 +14,13 @@ int main(void)
     Settings settings = Settings::LoadFromFile();
     vec2 screenSize = vec2(settings.windowWidth, settings.windowHeight);
     float margin = settings.margin;
+    Rectangle backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
 
-    InitWindow(screenSize.x, screenSize.y, "raylib cpp test");
+    SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
+    InitWindow(screenSize.x, screenSize.y, "Wave Pool");
     SetWindowMinSize(500, 500);
     SetWindowState(FLAG_WINDOW_RESIZABLE);
+    SetWindowState(FLAG_WINDOW_UNDECORATED);
     InitAudioDevice();
     SetMasterVolume(settings.volume);
     SetTargetFPS(60);
@@ -50,7 +53,8 @@ int main(void)
 
         BeginDrawing();
 
-        ClearBackground(settings.backgroundColour);
+        ClearBackground(BLANK);
+        DrawRectangleRounded(backgroundRect, 0.075, 6, settings.backgroundColour);
         radialInstrument.DrawGuides(settings.guideColour, 6);
         wavePool.Draw();
         DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
