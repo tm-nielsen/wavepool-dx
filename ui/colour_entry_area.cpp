@@ -32,9 +32,12 @@ namespace ui {
   vec2 ColourEntryArea::DrawEnteredText(Color colour)
   {
     vec2 textPosition = area.origin + margin;
-    DrawText("#", textPosition.x, textPosition.y, fontSize, normalColour);
+    Color prefixColour = isFocused? normalColour: colour;
+    DrawText("#", textPosition.x, textPosition.y, fontSize, prefixColour);
+
     textPosition += RIGHT * (MeasureText("#", fontSize) + margin);
     DrawText(text.c_str(), textPosition.x, textPosition.y, fontSize, colour);
+
     return textPosition + RIGHT * MeasureText(text.c_str(), fontSize);
   }
 }
