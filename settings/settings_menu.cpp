@@ -4,7 +4,7 @@
 #include <iostream>
 #include "settings.cpp"
 #include "../utils/file_utils.cpp"
-#include "../ui/text_area.cpp"
+#include "../ui/colour_entry_area.cpp"
 
 namespace settings {
   using namespace ui;
@@ -14,7 +14,7 @@ namespace settings {
   {
     private:
       Settings* settings;
-      TextArea backgroundColourTextArea;
+      ColourEntryArea backgroundColourTextArea;
 
       std::vector<TextArea*> textAreas;
 
@@ -38,7 +38,7 @@ namespace settings {
   SettingsMenu::SettingsMenu(Settings* settings, vec2 screenSize, float margin, float spacing = 12):
     settings{settings}, margin{margin}, spacing{spacing}
   {
-    backgroundColourTextArea = TextArea();
+    backgroundColourTextArea = ColourEntryArea();
     backgroundColourTextArea.onSubmit = [this](const char* s){SetBackgroundColour(s);};
 
     textAreas = {&backgroundColourTextArea};

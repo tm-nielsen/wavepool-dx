@@ -4,21 +4,24 @@
 #include "../utils/rect.cpp"
 
 namespace ui {
+#ifndef TEXT_AREA
+#define TEXT_AREA
   using namespace utils;
 
   class TextArea
   {
     private:
+      float borderThickness;
+      float caretBlinkPeriod;
+      float caretBlinkTimer;
+      bool shouldDrawCaret;
+
+    protected:
       rect area;
       Color normalColour;
       Color hoveredColour;
-      float borderThickness;
       float margin;
       float fontSize;
-
-      float caretBlinkPeriod;
-      float caretBlinkTimer;
-      bool drawCaret;
 
     public:
       std::function<void(const char*)> onEdit;
@@ -39,13 +42,13 @@ namespace ui {
       void SetArea(rect);
       void Update(vec2);
       void ProcessTextEntry();
-      bool IsCharacterValid(char);
+      virtual bool IsCharacterValid(char);
       void NotifyEdit();
       void Submit();
       void GainFocus();
       void LoseFocus();
       void Draw();
-      vec2 DrawEnteredText(Color);
+      virtual vec2 DrawEnteredText(Color);
       void DrawCaret(vec2, Color);
   };
 
@@ -108,7 +111,7 @@ namespace ui {
     caretBlinkTimer += GetFrameTime();
     if (caretBlinkTimer > caretBlinkPeriod) {
       caretBlinkTimer -= caretBlinkPeriod;
-      drawCaret = !drawCaret;
+      shouldDrawCaret = !shouldDrawCaret;
     }
 
     if (IsKeyPressed(KEY_ENTER)) {
@@ -166,7 +169,7 @@ namespace ui {
   void TextArea::GainFocus()
   {
     isFocused = true;
-    drawCaret = true;
+    shouldDrawCaret = true;
     caretBlinkTimer = 0;
     onFocusGained;
   }
@@ -174,7 +177,7 @@ namespace ui {
   void TextArea::LoseFocus()
   {
     isFocused = false;
-    drawCaret = false;
+    shouldDrawCaret = false;
     onFocusLost();
   }
 
@@ -199,10 +202,11 @@ namespace ui {
 
   void TextArea::DrawCaret(vec2 textEndPosition, Color colour)
   {
-    if (drawCaret) {
-      vec2 caretPosition = textEndPosition + RIGHT * fontSize / 4;
+    if (shouldDrawCaret) {
+      vec2 caretPosition = textEndPosition + RIGHT * margin;
       vec2 caretBottom = caretPosition + DOWN * fontSize;
       DrawLineEx(caretPosition.ToVector2(), caretBottom.ToVector2(), borderThickness, colour);
     }
   }
+#endif
 }
