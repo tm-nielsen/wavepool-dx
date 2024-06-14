@@ -5,6 +5,9 @@
 #include <vector>
 
 namespace utils {
+#ifndef FILE_UTILITIES
+#define FILE_UTILITIES
+
   Color GetColourFromString(std::string hexString)
   {
     if (hexString[0] == '#')
@@ -85,4 +88,5 @@ namespace utils {
     }
     ConcatenateLine(s, joinedString.c_str());
   }
+#endif
 }

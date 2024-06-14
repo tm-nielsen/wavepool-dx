@@ -3,7 +3,7 @@
 #include "utils/vec2.cpp"
 #include "wave_pool/radial_instrument.cpp"
 #include "window_management/window_manager.cpp"
-#include "settings/settings.cpp"
+#include "settings/settings_menu.cpp"
 
 using namespace window_management;
 using namespace wave_pool;
@@ -33,6 +33,9 @@ int main(void)
     windowManager.LoadResources();
     windowManager.SetStyle(settings.guideColour, settings.mainColour, 6);
 
+    SettingsMenu settingsMenu = SettingsMenu(&settings, screenSize, margin);
+    settingsMenu.SetStyle(settings.guideColour, settings.mainColour, 6);
+
     WavePool wavePool = WavePool(screenSize, margin,
         settings.dotSize, settings.dotSpacing, settings.mainColour);
 
@@ -51,12 +54,18 @@ int main(void)
             backgroundRect = rect(margin, newScreenSize - (2 * margin)).ToRectangle();
             radialInstrument.OnWindowResized(newScreenSize);
             wavePool.OnWindowResized(newScreenSize);
+            settingsMenu.OnWindowResized(newScreenSize);
         }
 
         windowManager.Update();
         if (windowManager.shouldExitProgram)
             break;
-        if (!windowManager.settingsMenuIsOpen)
+        
+        if (windowManager.settingsMenuIsOpen)
+        {
+            settingsMenu.Update();
+        }
+        else
         {
             radialInstrument.Update();
             wavePool.Update();
@@ -68,7 +77,11 @@ int main(void)
         DrawRectangleRounded(backgroundRect, 0.075, 6, settings.backgroundColour);
 
         windowManager.Draw();
-        if (!windowManager.settingsMenuIsOpen)
+        if (windowManager.settingsMenuIsOpen)
+        {
+            settingsMenu.Draw();
+        }
+        else
         {
             radialInstrument.DrawGuides(settings.guideColour, 6);
             wavePool.Draw();
