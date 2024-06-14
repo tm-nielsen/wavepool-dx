@@ -3,6 +3,8 @@
 #include "../utils/rect.cpp"
 
 namespace ui {
+#ifndef BUTTON
+#define BUTTON
   using namespace utils;
 
   class Button
@@ -14,6 +16,7 @@ namespace ui {
       float hoverRotation;
       float textureRotation;
 
+    protected:
       Color normalColour;
       Color hoveredColour;
       float borderThickness;
@@ -27,11 +30,17 @@ namespace ui {
       Button();
       Button(rect, std::function<void()>, std::function<void()>);
       Button(vec2, vec2, std::function<void()>, std::function<void()>);
+      
       void LoadResources(const char*);
       void UnloadResources();
       void SetStyle(Color, Color, float, float);
-      void Update(vec2);
-      void Draw();
+      virtual void Update(vec2);
+      virtual void OnPressed();
+      virtual void OnReleased();
+      virtual void OnReleasedWithoutHover();
+      void LerpRotation();
+      virtual void Draw();
+      void DrawWithColour(Color);
   };
 
   Button::Button(): area{rect()}, onPress{[](){}}, onRelease{[](){}} {};
@@ -74,18 +83,36 @@ namespace ui {
     isHovered = area.ContainsPoint(mousePosition);
 
     if (isHovered) {
-      if (isPressed && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-        isPressed = false;
-        onRelease();
-      }
-      else if (!isPressed && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        isPressed = true;
-        onPress();
-      }
+      if (isPressed && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        OnReleased();
+      else if (!isPressed && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        OnPressed();
     }
-    else
-      isPressed &= IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+    else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+      OnReleasedWithoutHover();
 
+    LerpRotation();
+  }
+
+  void Button::OnPressed()
+  {
+    isPressed = true;
+    onPress();
+  }
+
+  void Button::OnReleased()
+  {
+    isPressed = false;
+    onRelease();
+  }
+
+  void Button::OnReleasedWithoutHover()
+  {
+    isPressed = false;
+  }
+
+  void Button::LerpRotation()
+  {
     float targetRotation = isHovered? hoverRotation: 0;
     textureRotation = Lerp(textureRotation, targetRotation, 12 * GetFrameTime());
   }
@@ -93,6 +120,11 @@ namespace ui {
   void Button::Draw()
   {
     Color colour = isHovered? hoveredColour: normalColour;
+    DrawWithColour(colour);
+  }
+
+  void Button::DrawWithColour(Color colour)
+  {
     area.DrawRounded(borderThickness, colour);
 
     float finalTextureScale = textureScale;
@@ -104,4 +136,5 @@ namespace ui {
     }
     DrawTextureEx(texture, texturePosition.ToVector2(), textureRotation, finalTextureScale, colour);
   }
+#endif
 }

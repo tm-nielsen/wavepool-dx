@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "../ui/button.cpp"
+#include "../ui/drag_button.cpp"
 
 namespace window_management {
   using namespace ui;
@@ -9,6 +10,9 @@ namespace window_management {
     private:
       Button closeProgramButton;
       Button toggleMenuButton;
+      DragButton moveButton;
+
+      Button* buttons [3];
 
       float buttonSpacing;
 
@@ -33,6 +37,7 @@ namespace window_management {
     };
     closeProgramButton = Button(buttonRect);
     closeProgramButton.onRelease = closeProgram;
+    buttons[0] = &closeProgramButton;
 
     buttonRect.origin.x -= margin;
     auto toggleMenu = [this]() {
@@ -40,36 +45,48 @@ namespace window_management {
     };
     toggleMenuButton = Button(buttonRect);
     toggleMenuButton.onPress = toggleMenu;
+    buttons[1] = &toggleMenuButton;
+
+    buttonRect.origin.x -= margin;
+    auto moveWindow = [](vec2 offset) {
+      vec2 windowPosition = GetWindowPosition();
+      windowPosition += offset;
+      SetWindowPosition(windowPosition.x, windowPosition.y);
+    };
+    moveButton = DragButton(buttonRect, true);
+    moveButton.onDrag = moveWindow;
+    buttons[2] = &moveButton;
   }
 
   void WindowManager::LoadResources()
   {
     closeProgramButton.LoadResources("resources/icons/close_icon.png");
     toggleMenuButton.LoadResources("resources/icons/settings_icon.png");
+    moveButton.LoadResources("resources/icons/move_icon.png");
   }
 
   void WindowManager::UnloadResources()
   {
-    closeProgramButton.UnloadResources();
-    toggleMenuButton.UnloadResources();
+    for (Button* buttonPointer : buttons)
+      buttonPointer->UnloadResources();
   }
 
   void WindowManager::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
-    closeProgramButton.SetStyle(normalColour, hoverColour, thickness);
-    toggleMenuButton.SetStyle(normalColour, hoverColour, thickness);
+    for (Button* buttonPointer : buttons)
+      buttonPointer->SetStyle(normalColour, hoverColour, thickness);
   }
 
   void WindowManager::Update()
   {
     vec2 mousePosition = GetMousePosition();
-    closeProgramButton.Update(mousePosition);
-    toggleMenuButton.Update(mousePosition);
+    for (Button* buttonPointer : buttons)
+      buttonPointer->Update(mousePosition);
   }
 
   void WindowManager::Draw() 
   {
-    closeProgramButton.Draw();
-    toggleMenuButton.Draw();
+    for (Button* buttonPointer : buttons)
+      buttonPointer->Draw();
   }
 }
