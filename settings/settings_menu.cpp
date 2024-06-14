@@ -7,12 +7,16 @@ namespace settings {
   class SettingsMenu
   {
     private:
-      Button openButton;
+      Button closeProgramButton;
+      Button toggleMenuButton;
+
+      float buttonSpacing;
 
     public:
       bool isOpen = false;
+      bool closeButtonPressed = false;
 
-      SettingsMenu(vec2, float);
+      SettingsMenu(vec2, float, float);
       void LoadResources();
       void UnloadResources();
       void SetStyle(Color, Color, float);
@@ -20,37 +24,50 @@ namespace settings {
       void Draw();
   };
 
-  SettingsMenu::SettingsMenu(vec2 screenSize, float margin)
+  SettingsMenu::SettingsMenu(vec2 screenSize, float margin, float buttonSpacing = 12)
   {
-    auto onOpenButtonClicked = [this]() {
+    vec2 buttonPosition = vec2(screenSize.x - margin, 6.0);
+    buttonPosition.x -= buttonSpacing;
+    auto closeProgram = [this]() {
+      closeButtonPressed = true;
+    };
+    closeProgramButton = Button(buttonPosition, vec2(margin - 12), closeProgram);
+
+    buttonPosition.x -= margin;
+    auto toggleMenu = [this]() {
       isOpen = !isOpen;
     };
-    openButton = Button(vec2(screenSize.x - margin, 0.0), vec2(margin), onOpenButtonClicked);
+    toggleMenuButton = Button(buttonPosition, vec2(margin - 12), toggleMenu);
   }
 
   void SettingsMenu::LoadResources()
   {
-    openButton.LoadResources("resources/icons/settings_icon.png");
+    toggleMenuButton.LoadResources("resources/icons/settings_icon.png");
+    closeProgramButton.LoadResources("resources/icons/close_icon.png");
   }
 
   void SettingsMenu::UnloadResources()
   {
-    openButton.UnloadResources();
+    toggleMenuButton.UnloadResources();
+    closeProgramButton.UnloadResources();
   }
 
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
-    openButton.SetStyle(normalColour, hoverColour, thickness);
+    toggleMenuButton.SetStyle(normalColour, hoverColour, thickness);
+    closeProgramButton.SetStyle(normalColour, hoverColour, thickness);
   }
 
   void SettingsMenu::Update()
   {
     vec2 mousePosition = GetMousePosition();
-    openButton.Update(mousePosition);
+    toggleMenuButton.Update(mousePosition);
+    closeProgramButton.Update(mousePosition);
   }
 
   void SettingsMenu::Draw() 
   {
-    openButton.Draw();
+    toggleMenuButton.Draw();
+    closeProgramButton.Draw();
   }
 }

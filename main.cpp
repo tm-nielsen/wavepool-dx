@@ -53,6 +53,8 @@ int main(void)
         }
 
         settingsMenu.Update();
+        if (settingsMenu.closeButtonPressed)
+            break;
         if (!settingsMenu.isOpen)
         {
             radialInstrument.Update();
