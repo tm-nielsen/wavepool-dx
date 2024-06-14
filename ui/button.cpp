@@ -15,6 +15,7 @@ namespace ui {
       float textureScale;
       float hoverRotation;
       float textureRotation;
+      bool canPress;
 
     protected:
       Color normalColour;
@@ -80,16 +81,25 @@ namespace ui {
 
   void Button::Update(vec2 mousePosition)
   {
-    isHovered = area.ContainsPoint(mousePosition);
+    isHovered = canPress && area.ContainsPoint(mousePosition);
 
+    bool isMousePressed = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
     if (isHovered) {
       if (isPressed && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         OnReleased();
-      else if (!isPressed && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+      else if (canPress && !isPressed && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         OnPressed();
     }
-    else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-      OnReleasedWithoutHover();
+    else {
+      if (!isMousePressed)
+      {
+        canPress = true;
+        if (isPressed)
+          OnReleasedWithoutHover();
+      }
+      else if (!isPressed)
+        canPress = false;
+    }
 
     LerpRotation();
   }
