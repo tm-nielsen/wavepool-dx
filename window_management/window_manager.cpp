@@ -17,7 +17,6 @@ namespace window_management {
 
       std::vector<Button*> buttons;
 
-      vec2 minimumSize;
       float margin;
       float buttonSpacing;
 
@@ -33,53 +32,31 @@ namespace window_management {
       void Update();
       void OnWindowResized(vec2);
       void Draw();
+
+      void CloseProgram();
+      void ToggleSettingsMenu();
+      void MoveWindow(vec2);
+      void ResizeWindow(vec2, vec2);
   };
 
   WindowManager::WindowManager(vec2 size, vec2 minimumSize, float margin, float buttonSpacing = 12):
-    minimumSize{minimumSize}, margin{margin}, buttonSpacing{buttonSpacing}
+    margin{margin}, buttonSpacing{buttonSpacing}
   {
-    auto closeProgram = [this]() {
-      shouldExitProgram = true;
-    };
     closeProgramButton = Button();
-    closeProgramButton.onRelease = closeProgram;
+    closeProgramButton.onRelease = [this](){CloseProgram();};
     buttons.push_back(&closeProgramButton);
 
-    auto toggleMenu = [this]() {
-      settingsMenuIsOpen = !settingsMenuIsOpen;
-    };
     toggleMenuButton = Button();
-    toggleMenuButton.onPress = toggleMenu;
+    toggleMenuButton.onPress = [this](){ToggleSettingsMenu();};
     buttons.push_back(&toggleMenuButton);
 
-    auto moveWindow = [](vec2 offset) {
-      vec2 windowPosition = GetWindowPosition();
-      windowPosition += offset;
-      SetWindowPosition(windowPosition.x, windowPosition.y);
-    };
     moveButton = DragButton(vec2(-1, -1));
-    moveButton.onDrag = moveWindow;
+    moveButton.onDrag = [this](vec2 offset){MoveWindow(offset);};
     moveButton.holdKey = KEY_SPACE;
     buttons.push_back(&moveButton);
 
-    auto resizeWindow = [this, minimumSize](vec2 offset) {
-      vec2 windowSize = vec2(GetScreenWidth(), GetScreenHeight());
-      float currentWindowHeight = windowSize.y;
-      vec2 windowPosition = GetWindowPosition();
-      
-      offset.y *= -1;
-      windowSize += offset;
-      windowSize = windowSize.ClampLower(minimumSize);
-      windowPosition.y -= windowSize.y - currentWindowHeight;
-
-      SetWindowSize(windowSize.x, windowSize.y);
-      SetWindowPosition(windowPosition.x, windowPosition.y);
-
-      windowResized = true;
-      OnWindowResized(windowSize);
-    };
     resizeButton = DragButton(UP);
-    resizeButton.onDrag = resizeWindow;
+    resizeButton.onDrag = [this, minimumSize](vec2 offset){ResizeWindow(offset, minimumSize);};
     resizeButton.holdKey = KEY_R;
     buttons.push_back(&resizeButton);
 
@@ -130,5 +107,42 @@ namespace window_management {
   {
     for (Button* buttonPointer : buttons)
       buttonPointer->Draw();
+  }
+
+
+  void WindowManager::CloseProgram()
+  {
+    shouldExitProgram = true;
+  }
+
+  void WindowManager::ToggleSettingsMenu()
+  {
+    settingsMenuIsOpen = !settingsMenuIsOpen;
+  }
+
+  void WindowManager::MoveWindow(vec2 offset)
+  {
+    vec2 windowPosition = GetWindowPosition();
+    windowPosition += offset;
+    SetWindowPosition(windowPosition.x, windowPosition.y);
+  }
+
+  void WindowManager::ResizeWindow(vec2 offset, vec2 minimumSize)
+  {
+    vec2 windowSize = vec2(GetScreenWidth(), GetScreenHeight());
+    float currentWindowHeight = windowSize.y;
+    
+    offset.y *= -1;
+    windowSize += offset;
+    windowSize = windowSize.ClampLower(minimumSize);
+
+    vec2 windowPosition = GetWindowPosition();
+    windowPosition.y -= windowSize.y - currentWindowHeight;
+
+    SetWindowSize(windowSize.x, windowSize.y);
+    SetWindowPosition(windowPosition.x, windowPosition.y);
+
+    windowResized = true;
+    OnWindowResized(windowSize);
   }
 }
