@@ -19,12 +19,14 @@ namespace ui {
       float borderThickness;
 
     public:
-      std::function<void()> onClick;
+      std::function<void()> onPress;
+      std::function<void()> onRelease;
       bool isHovered;
       bool isPressed;
 
       Button();
-      Button(vec2, vec2, std::function<void()>);
+      Button(rect, std::function<void()>, std::function<void()>);
+      Button(vec2, vec2, std::function<void()>, std::function<void()>);
       void LoadResources(const char*);
       void UnloadResources();
       void SetStyle(Color, Color, float, float);
@@ -32,10 +34,17 @@ namespace ui {
       void Draw();
   };
 
-  Button::Button(): area{rect()}, onClick{[]() {}} {}
+  Button::Button(): area{rect()}, onPress{[](){}}, onRelease{[](){}} {};
 
-  Button::Button(vec2 origin, vec2 size, std::function<void()> onClick):
-    area{rect(origin, size)}, onClick{onClick} {}
+  Button::Button(rect area,
+      std::function<void()> onPress = [](){},
+      std::function<void()> onRelease = [](){}):
+    area{area}, onPress{onPress}, onRelease{onRelease} {};
+
+  Button::Button(vec2 origin, vec2 size,
+      std::function<void()> onPress = [](){},
+      std::function<void()> onRelease = [](){}):
+    area{rect(origin, size)}, onPress{onPress}, onRelease{onRelease} {};
 
 
   void Button::LoadResources(const char* texturePath)
@@ -52,7 +61,7 @@ namespace ui {
     UnloadTexture(texture);
   }
 
-  void Button::SetStyle(Color normal, Color hovered, float thickness, float rotation = -20)
+  void Button::SetStyle(Color normal, Color hovered, float thickness, float rotation = -90)
   {
     normalColour = normal;
     hoveredColour = hovered;
@@ -63,9 +72,19 @@ namespace ui {
   void Button::Update(vec2 mousePosition)
   {
     isHovered = area.ContainsPoint(mousePosition);
-    if (isPressed && !IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-      onClick();
-    isPressed = IsMouseButtonDown(MOUSE_BUTTON_LEFT) && isHovered;
+
+    if (isHovered) {
+      if (isPressed && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+        isPressed = false;
+        onRelease();
+      }
+      else if (!isPressed && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        isPressed = true;
+        onPress();
+      }
+    }
+    else
+      isPressed &= IsMouseButtonDown(MOUSE_BUTTON_LEFT);
 
     float targetRotation = isHovered? hoverRotation: 0;
     textureRotation = Lerp(textureRotation, targetRotation, 12 * GetFrameTime());
@@ -73,11 +92,16 @@ namespace ui {
 
   void Button::Draw()
   {
-    Color colour = isHovered? hoveredColour : normalColour;
+    Color colour = isHovered? hoveredColour: normalColour;
     area.DrawRounded(borderThickness, colour);
 
+    float finalTextureScale = textureScale;
     vec2 centre = area.origin + area.size / 2;
     vec2 texturePosition = area.origin.RotatedAroundPoint(centre, textureRotation);
-    DrawTextureEx(texture, texturePosition.ToVector2(), textureRotation, textureScale, colour);
+    if (isPressed) {
+      finalTextureScale *= 0.6;
+      texturePosition = texturePosition.ScaledAroundPoint(centre, 0.6);
+    }
+    DrawTextureEx(texture, texturePosition.ToVector2(), textureRotation, finalTextureScale, colour);
   }
 }

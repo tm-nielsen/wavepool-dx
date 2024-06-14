@@ -153,6 +153,11 @@ namespace utils {
         return vec2(x * cos(radians) - y * sin(radians), x * sin(radians) + y * cos(radians));
       }
 
+      vec2 ScaledAroundPoint(vec2 anchorPoint, float scale) {
+        vec2 offset = *this - anchorPoint;
+        return anchorPoint + offset * scale;
+      }
+
       Vector2 ToVector2() {
         return Vector2{x, y};
       }

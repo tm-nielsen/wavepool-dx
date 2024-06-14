@@ -26,18 +26,20 @@ namespace window_management {
 
   WindowManager::WindowManager(vec2 screenSize, float margin, float buttonSpacing = 12)
   {
-    vec2 buttonPosition = vec2(screenSize.x - margin, 6.0);
-    buttonPosition.x -= buttonSpacing;
+    rect buttonRect = rect(vec2(screenSize.x - margin, 6.0), vec2(margin - 12));
+    buttonRect.origin.x -= buttonSpacing;
     auto closeProgram = [this]() {
       shouldExitProgram = true;
     };
-    closeProgramButton = Button(buttonPosition, vec2(margin - 12), closeProgram);
+    closeProgramButton = Button(buttonRect);
+    closeProgramButton.onRelease = closeProgram;
 
-    buttonPosition.x -= margin;
+    buttonRect.origin.x -= margin;
     auto toggleMenu = [this]() {
       settingsMenuIsOpen = !settingsMenuIsOpen;
     };
-    toggleMenuButton = Button(buttonPosition, vec2(margin - 12), toggleMenu);
+    toggleMenuButton = Button(buttonRect);
+    toggleMenuButton.onPress = toggleMenu;
   }
 
   void WindowManager::LoadResources()
