@@ -59,6 +59,7 @@ namespace window_management {
     };
     moveButton = DragButton(vec2(-1, -1));
     moveButton.onDrag = moveWindow;
+    moveButton.holdKey = KEY_SPACE;
     buttons.push_back(&moveButton);
 
     auto resizeWindow = [this, minimumSize](vec2 offset) {
@@ -79,6 +80,7 @@ namespace window_management {
     };
     resizeButton = DragButton(UP);
     resizeButton.onDrag = resizeWindow;
+    resizeButton.holdKey = KEY_R;
     buttons.push_back(&resizeButton);
 
     OnWindowResized(size);

@@ -14,6 +14,7 @@ namespace ui {
     public:
       std::function<void(vec2)> onDrag = [](vec2 v){};
       std::function<void(vec2)> onDragFinished = [](vec2){};
+      KeyboardKey holdKey = KEY_NULL;
 
       DragButton(vec2);
       DragButton(rect, vec2);
@@ -37,6 +38,8 @@ namespace ui {
   void DragButton::Update(vec2 mousePosition)
   {
     Button::Update(mousePosition);
+    if (IsKeyDown(holdKey) && !isPressed && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+      OnPressed();
     if (isPressed && mousePosition != lastDragPosition)
     {
       vec2 offset = mousePosition - lastDragPosition;
