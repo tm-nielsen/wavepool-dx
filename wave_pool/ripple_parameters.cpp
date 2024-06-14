@@ -1,4 +1,4 @@
-namespace wavepool {
+namespace wave_pool {
   struct RippleParameters {
     float radius;
     float amplitude;

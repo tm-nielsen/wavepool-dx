@@ -1,12 +1,12 @@
 #include "raylib.h"
 #include <string>
 #include "utils/vec2.cpp"
-#include "wavepool/radial_instrument.cpp"
+#include "wave_pool/radial_instrument.cpp"
 #include "window_management/window_manager.cpp"
 #include "settings/settings.cpp"
 
 using namespace window_management;
-using namespace wavepool;
+using namespace wave_pool;
 using namespace settings;
 using namespace utils;
 

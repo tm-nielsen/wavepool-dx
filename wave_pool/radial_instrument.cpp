@@ -3,7 +3,7 @@
 #include "../utils/rect.cpp"
 #include "ripple_spawner.cpp"
 
-namespace wavepool {
+namespace wave_pool {
   using namespace utils;
 
   class RadialInstrument {

@@ -2,7 +2,7 @@
 #include "../utils/vec2.cpp"
 #include "wave_pool.cpp"
 
-namespace wavepool {
+namespace wave_pool {
   using namespace utils;
 
   class RippleSpawner {

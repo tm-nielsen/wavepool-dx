@@ -2,7 +2,7 @@
 #include "../utils/vec2.cpp"
 #include <functional>
 
-namespace wavepool {
+namespace wave_pool {
   using namespace utils;
 
   class WaveGrid

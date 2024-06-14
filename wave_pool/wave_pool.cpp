@@ -5,7 +5,7 @@
 #include "wave_grid.cpp"
 #include "ripple.cpp"
 
-namespace wavepool {
+namespace wave_pool {
   using namespace utils;
 
   class WavePool

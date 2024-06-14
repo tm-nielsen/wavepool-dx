@@ -9,7 +9,7 @@
 #define TAU (PI * 2)
 #endif
 
-namespace wavepool {
+namespace wave_pool {
   using namespace utils;
 
   class Ripple
