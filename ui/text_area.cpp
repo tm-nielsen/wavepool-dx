@@ -42,6 +42,8 @@ namespace ui {
       void SetArea(rect);
       void Update(vec2);
       void ProcessTextEntry();
+      virtual void PasteFromClipboard();
+      virtual void CopyToClipboard();
       virtual bool IsCharacterValid(char);
       void NotifyEdit();
       void Submit();
@@ -122,11 +124,11 @@ namespace ui {
     bool isControlPressed = IsKeyDown(KEY_LEFT_CONTROL);
     isControlPressed |= IsKeyDown(KEY_RIGHT_CONTROL);
     if (isControlPressed && IsKeyPressed(KEY_V)) {
-      text = GetClipboardText();
+      PasteFromClipboard();
       return;
     }
     if (isControlPressed && IsKeyPressed(KEY_C)) {
-      SetClipboardText(text.c_str());
+      CopyToClipboard();
       return;
     }
 
@@ -148,6 +150,16 @@ namespace ui {
       text = "";
       NotifyEdit();
     }
+  }
+
+  void TextArea::PasteFromClipboard()
+  {
+    text = GetClipboardText();
+  }
+
+  void TextArea::CopyToClipboard()
+  {
+    SetClipboardText(text.c_str());
   }
 
   bool TextArea::IsCharacterValid(char c)

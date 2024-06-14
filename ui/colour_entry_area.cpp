@@ -3,9 +3,23 @@
 namespace ui {
   class ColourEntryArea: public TextArea
   {
+    void PasteFromClipboard() override;
+    void CopyToClipboard() override;
     bool IsCharacterValid(char) override;
     vec2 DrawEnteredText(Color) override;
   };
+
+  void ColourEntryArea::PasteFromClipboard()
+  {
+    TextArea::PasteFromClipboard();
+    if (text[0] == '#')
+      text = text.substr(1, text.length() -1);
+  }
+
+  void ColourEntryArea::CopyToClipboard()
+  {
+    SetClipboardText(("#" + text).c_str());
+  }
 
   bool ColourEntryArea::IsCharacterValid(char c)
   {
