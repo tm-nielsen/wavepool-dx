@@ -17,6 +17,7 @@ namespace window_management {
 
       std::vector<Button*> buttons;
 
+      vec2 minimumSize;
       float margin;
       float buttonSpacing;
 
@@ -25,7 +26,7 @@ namespace window_management {
       bool settingsMenuIsOpen = false;
       bool windowResized = false;
 
-      WindowManager(vec2, float, float);
+      WindowManager(vec2, vec2, float, float);
       void LoadResources();
       void UnloadResources();
       void SetStyle(Color, Color, float);
@@ -34,8 +35,8 @@ namespace window_management {
       void Draw();
   };
 
-  WindowManager::WindowManager(vec2 screenSize, float margin, float buttonSpacing = 12):
-    margin{margin}, buttonSpacing{buttonSpacing}
+  WindowManager::WindowManager(vec2 size, vec2 minimumSize, float margin, float buttonSpacing = 12):
+    minimumSize{minimumSize}, margin{margin}, buttonSpacing{buttonSpacing}
   {
     auto closeProgram = [this]() {
       shouldExitProgram = true;
@@ -60,14 +61,19 @@ namespace window_management {
     moveButton.onDrag = moveWindow;
     buttons.push_back(&moveButton);
 
-    auto resizeWindow = [this](vec2 offset) {
+    auto resizeWindow = [this, minimumSize](vec2 offset) {
       vec2 windowSize = vec2(GetScreenWidth(), GetScreenHeight());
+      float currentWindowHeight = windowSize.y;
       vec2 windowPosition = GetWindowPosition();
+      
       offset.y *= -1;
       windowSize += offset;
-      windowPosition += UP * offset;
+      windowSize = windowSize.ClampLower(minimumSize);
+      windowPosition.y -= windowSize.y - currentWindowHeight;
+
       SetWindowSize(windowSize.x, windowSize.y);
       SetWindowPosition(windowPosition.x, windowPosition.y);
+
       windowResized = true;
       OnWindowResized(windowSize);
     };
@@ -75,7 +81,7 @@ namespace window_management {
     resizeButton.onDrag = resizeWindow;
     buttons.push_back(&resizeButton);
 
-    OnWindowResized(screenSize);
+    OnWindowResized(size);
   }
 
   void WindowManager::LoadResources()

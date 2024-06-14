@@ -158,6 +158,16 @@ namespace utils {
         return anchorPoint + offset * scale;
       }
 
+      vec2 ClampLower(vec2 lowerLimit)
+      {
+        vec2 v = *this;
+        if (v.x < lowerLimit.x)
+          v.x = lowerLimit.x;
+        if (v.y < lowerLimit.y)
+          v.y = lowerLimit.y;
+        return v;
+      }
+
       Vector2 ToVector2() {
         return Vector2{x, y};
       }

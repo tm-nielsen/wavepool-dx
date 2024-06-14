@@ -22,15 +22,14 @@ int main(void)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     SetConfigFlags(FLAG_WINDOW_UNDECORATED);
     InitWindow(screenSize.x, screenSize.y, "Wave Pool");
-    SetWindowMinSize(500, 500);
+    SetTargetFPS(60);
     InitAudioDevice();
     SetMasterVolume(settings.volume);
-    SetTargetFPS(60);
 
 
     Rectangle backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
 
-    WindowManager windowManager = WindowManager(screenSize, margin);
+    WindowManager windowManager = WindowManager(screenSize, vec2(500), margin);
     windowManager.LoadResources();
     windowManager.SetStyle(settings.guideColour, settings.mainColour, 6);
 
