@@ -9,15 +9,15 @@ namespace ui {
       vec2 dragStartPosition;
       vec2 lastDragPosition;
 
-      bool negateMouseMovement = false;
+      vec2 mouseNegation;
 
     public:
       std::function<void(vec2)> onDrag = [](vec2 v){};
       std::function<void(vec2)> onDragFinished = [](vec2){};
 
-      DragButton();
-      DragButton(rect, bool);
-      DragButton(vec2, vec2, bool);
+      DragButton(vec2);
+      DragButton(rect, vec2);
+      DragButton(vec2, vec2, vec2);
 
       void Update(vec2) override;
       void OnPressed() override;
@@ -26,11 +26,12 @@ namespace ui {
       void Draw() override;
   };
 
-  DragButton::DragButton(): Button() {};
-  DragButton::DragButton(rect area, bool affectsMousePosition = false):
-    Button(area), negateMouseMovement{affectsMousePosition} {};
-  DragButton::DragButton(vec2 origin, vec2 size, bool affectsMousePosition = false):
-    Button(origin, size), negateMouseMovement{affectsMousePosition} {};
+  DragButton::DragButton(vec2 mouseNegation = vec2()):
+    Button(), mouseNegation{mouseNegation} {};
+  DragButton::DragButton(rect area, vec2 mouseNegation = vec2()):
+    Button(area), mouseNegation{mouseNegation} {};
+  DragButton::DragButton(vec2 origin, vec2 size, vec2 mouseNegation = vec2()):
+    Button(origin, size), mouseNegation{mouseNegation} {};
 
 
   void DragButton::Update(vec2 mousePosition)
@@ -41,8 +42,7 @@ namespace ui {
       vec2 offset = mousePosition - lastDragPosition;
       onDrag(offset);
       lastDragPosition = mousePosition;
-      if (negateMouseMovement)
-        lastDragPosition -= offset;
+      lastDragPosition += offset * mouseNegation;
     }
   }
 

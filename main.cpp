@@ -41,14 +41,15 @@ int main(void)
 
     RadialInstrument radialInstrument= RadialInstrument(&rippleSpawner, screenSize, 100, margin);
     radialInstrument.LoadSounds();
-    
+
 
     // Main Game Loop
     while(!WindowShouldClose())
     {
-        if (IsWindowResized())
+        if (windowManager.windowResized)
         {
             vec2 newScreenSize = vec2(GetScreenWidth(), GetScreenHeight());
+            backgroundRect = rect(margin, newScreenSize - (2 * margin)).ToRectangle();
             radialInstrument.OnWindowResized(newScreenSize);
             wavePool.OnWindowResized(newScreenSize);
         }

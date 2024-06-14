@@ -35,6 +35,7 @@ namespace ui {
       void LoadResources(const char*);
       void UnloadResources();
       void SetStyle(Color, Color, float, float);
+      void SetArea(rect);
       virtual void Update(vec2);
       virtual void OnPressed();
       virtual void OnReleased();
@@ -77,6 +78,12 @@ namespace ui {
     hoveredColour = hovered;
     borderThickness = thickness;
     hoverRotation = rotation;
+  }
+
+  void Button::SetArea(rect area)
+  {
+    this->area = area;
+    textureScale = area.size.y / texture.height;
   }
 
   void Button::Update(vec2 mousePosition)
