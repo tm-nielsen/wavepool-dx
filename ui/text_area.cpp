@@ -113,6 +113,17 @@ namespace ui {
       return;
     }
 
+    bool isControlPressed = IsKeyDown(KEY_LEFT_CONTROL);
+    isControlPressed |= IsKeyDown(KEY_RIGHT_CONTROL);
+    if (isControlPressed && IsKeyPressed(KEY_V)) {
+      text = GetClipboardText();
+      return;
+    }
+    if (isControlPressed && IsKeyPressed(KEY_C)) {
+      SetClipboardText(text.c_str());
+      return;
+    }
+
     char key = GetCharPressed();
     while (key > 0) {
       bool canAppend = text.length() < maximumCharacters;
