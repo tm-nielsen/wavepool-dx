@@ -11,7 +11,7 @@ namespace window_management {
   {
     private:
       Button closeProgramButton;
-      Button toggleMenuButton;
+      Button toggleSettingsMenuButton;
       DragButton moveButton;
       DragButton resizeButton;
 
@@ -44,29 +44,26 @@ namespace window_management {
   {
     closeProgramButton = Button();
     closeProgramButton.onRelease = [this](){CloseProgram();};
-    buttons.push_back(&closeProgramButton);
 
-    toggleMenuButton = Button();
-    toggleMenuButton.onPress = [this](){ToggleSettingsMenu();};
-    buttons.push_back(&toggleMenuButton);
+    toggleSettingsMenuButton = Button();
+    toggleSettingsMenuButton.onPress = [this](){ToggleSettingsMenu();};
 
     moveButton = DragButton(vec2(-1, -1));
     moveButton.onDrag = [this](vec2 offset){MoveWindow(offset);};
     moveButton.holdKey = KEY_SPACE;
-    buttons.push_back(&moveButton);
 
     resizeButton = DragButton(UP);
     resizeButton.onDrag = [this, minimumSize](vec2 offset){ResizeWindow(offset, minimumSize);};
     resizeButton.holdKey = KEY_R;
-    buttons.push_back(&resizeButton);
 
+    buttons = {&closeProgramButton, &toggleSettingsMenuButton, &moveButton, &resizeButton};
     OnWindowResized(size);
   }
 
   void WindowManager::LoadResources()
   {
     closeProgramButton.LoadResources("resources/icons/close_icon.png");
-    toggleMenuButton.LoadResources("resources/icons/settings_icon.png");
+    toggleSettingsMenuButton.LoadResources("resources/icons/settings_icon.png");
     moveButton.LoadResources("resources/icons/move_icon.png");
     resizeButton.LoadResources("resources/icons/scale_icon.png");
   }
