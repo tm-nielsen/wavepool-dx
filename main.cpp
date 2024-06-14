@@ -19,10 +19,10 @@ int main(void)
 
 
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_WINDOW_UNDECORATED);
     InitWindow(screenSize.x, screenSize.y, "Wave Pool");
     SetWindowMinSize(500, 500);
-    SetWindowState(FLAG_WINDOW_RESIZABLE);
-    SetWindowState(FLAG_WINDOW_UNDECORATED);
     InitAudioDevice();
     SetMasterVolume(settings.volume);
     SetTargetFPS(60);
