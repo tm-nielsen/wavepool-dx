@@ -37,13 +37,16 @@ namespace ui {
 
       void SetStyle(Color, Color, float, float, float);
       void SetArea(rect);
-      virtual void Update(vec2);
-      virtual void ProcessTextEntry();
-      virtual void NotifyEdit();
-      virtual void Submit();
+      void Update(vec2);
+      void ProcessTextEntry();
+      bool IsCharacterValid(char);
+      void NotifyEdit();
+      void Submit();
       void GainFocus();
       void LoseFocus();
       void Draw();
+      vec2 DrawEnteredText(Color);
+      void DrawCaret(vec2, Color);
   };
 
   TextArea::TextArea(): area{rect()}
@@ -127,7 +130,7 @@ namespace ui {
     char key = GetCharPressed();
     while (key > 0) {
       bool canAppend = text.length() < maximumCharacters;
-      if (key > 32 && key < 125 && canAppend) {
+      if (IsCharacterValid(key) && canAppend) {
         text += key;
         NotifyEdit();
       }
@@ -142,6 +145,11 @@ namespace ui {
       text = "";
       NotifyEdit();
     }
+  }
+
+  bool TextArea::IsCharacterValid(char c)
+  {
+    return c > 32 && c < 125;
   }
 
   void TextArea::NotifyEdit()
@@ -173,14 +181,26 @@ namespace ui {
   void TextArea::Draw()
   {
     Color colour = isHovered? hoveredColour: normalColour;
-    area.DrawRounded(borderThickness, colour);
+    if (isFocused)
+      colour = hoveredColour;
+    Color borderColour = isFocused? normalColour: colour;
+    area.DrawRounded(borderThickness, borderColour);
 
+    vec2 textEndPosition = DrawEnteredText(colour);
+    DrawCaret(textEndPosition, colour);
+  }
+
+  vec2 TextArea::DrawEnteredText(Color colour)
+  {
     vec2 textPosition = area.origin + margin;
     DrawText(text.c_str(), textPosition.x, textPosition.y, fontSize, colour);
+    return textPosition + RIGHT * MeasureText(text.c_str(), fontSize);
+  }
 
+  void TextArea::DrawCaret(vec2 textEndPosition, Color colour)
+  {
     if (drawCaret) {
-      vec2 caretPosition = textPosition;
-      caretPosition.x += MeasureText(text.c_str(), fontSize) + fontSize / 4;
+      vec2 caretPosition = textEndPosition + RIGHT * fontSize / 4;
       vec2 caretBottom = caretPosition + DOWN * fontSize;
       DrawLineEx(caretPosition.ToVector2(), caretBottom.ToVector2(), borderThickness, colour);
     }
