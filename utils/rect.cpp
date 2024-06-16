@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <iostream>
 #include "vec2.cpp"
 
 namespace utils {
@@ -40,6 +41,20 @@ namespace utils {
         size += sizeIncrease * 2;
       }
 
+      vec2 GetCentre() {
+        return origin + size / 2;
+      }
+
+      void SetCentre(vec2 position) {
+        origin = position - size / 2;
+      }
+
+      vec2 ClampPoint(vec2 point) {
+        point = origin.ClampLower(point);
+        point = (origin + size).ClampUpper(point);
+        return point;
+      }
+
       void Draw(float thickness, Color colour) {
         DrawRectangleLinesEx(ToRectangle(), thickness, colour);
       }
@@ -72,5 +87,9 @@ namespace utils {
         return Rectangle{origin.x, origin.y, size.x, size.y};
       }
   };
+      
+  std::ostream& operator<<(std::ostream &os, const rect &r) {
+    return os << "[" << r.origin << ", " << r.size << "]";
+  }
 #endif
 }

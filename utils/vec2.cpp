@@ -1,4 +1,5 @@
 #include <math.h>
+#include <iostream>
 #include "raymath.h"
 
 namespace utils {
@@ -168,9 +169,23 @@ namespace utils {
         return v;
       }
 
+      vec2 ClampUpper(vec2 upperLimit)
+      {
+        vec2 v = *this;
+        if (v.x > upperLimit.x)
+          v.x = upperLimit.x;
+        if (v.y > upperLimit.y)
+          v.y = upperLimit.y;
+        return v;
+      }
+
       Vector2 ToVector2() {
         return Vector2{x, y};
       }
   };
+
+  std::ostream& operator<<(std::ostream &os, const vec2 & v) {
+    return os << "(" << v.x << ", " << v.y << ")";
+  }
 #endif
 };
