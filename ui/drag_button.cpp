@@ -1,19 +1,22 @@
 #include "button.cpp"
 
 namespace ui {
+#ifndef DRAG_BUTTON
+#define DRAG_BUTTON
   using namespace utils;
+
+  typedef std::function<void(vec2)> BoundVec2Callback;
 
   class DragButton : public Button
   {
     private:
       vec2 dragStartPosition;
       vec2 lastDragPosition;
-
       vec2 mouseNegation;
 
     public:
-      std::function<void(vec2)> onDrag = [](vec2 v){};
-      std::function<void(vec2)> onDragFinished = [](vec2){};
+      BoundVec2Callback onDrag;
+      BoundVec2Callback onDragFinished;
       KeyboardKey holdKey = KEY_NULL;
 
       DragButton(vec2);
@@ -21,9 +24,9 @@ namespace ui {
       DragButton(vec2, vec2, vec2);
 
       void Update(vec2) override;
-      void OnPressed() override;
-      void OnReleased() override;
-      void OnReleasedWithoutHover() override;
+      void Press() override;
+      void Release() override;
+      void ReleaseWithoutHover() override;
       void Draw() override;
   };
 
@@ -39,35 +42,35 @@ namespace ui {
   {
     Button::Update(mousePosition);
     if (IsKeyDown(holdKey) && !isPressed && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-      OnPressed();
+      Press();
     if (isPressed && mousePosition != lastDragPosition)
     {
       vec2 offset = mousePosition - lastDragPosition;
-      onDrag(offset);
+      if(onDrag) onDrag(offset);
       lastDragPosition = mousePosition;
       lastDragPosition += offset * mouseNegation;
     }
   }
 
-  void DragButton::OnPressed()
+  void DragButton::Press()
   {
-    Button::OnPressed();
+    Button::Press();
     dragStartPosition = GetMousePosition();
     lastDragPosition = dragStartPosition;
   }
 
-  void DragButton::OnReleased()
+  void DragButton::Release()
   {
-    Button::OnReleased();
+    Button::Release();
     vec2 mousePosition = GetMousePosition();
-    onDragFinished(mousePosition - dragStartPosition);
+    if (onDragFinished) onDragFinished(mousePosition - dragStartPosition);
   }
 
-  void DragButton::OnReleasedWithoutHover()
+  void DragButton::ReleaseWithoutHover()
   {
-    Button::OnReleasedWithoutHover();
+    Button::ReleaseWithoutHover();
     vec2 mousePosition = GetMousePosition();
-    onDragFinished(mousePosition - dragStartPosition);
+    if (onDragFinished) onDragFinished(mousePosition - dragStartPosition);
   }
 
   void DragButton::Draw()
@@ -76,4 +79,5 @@ namespace ui {
     if (isPressed) colour = hoveredColour;
     DrawWithColour(colour);
   }
+#endif
 }

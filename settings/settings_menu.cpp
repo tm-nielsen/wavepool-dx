@@ -5,6 +5,7 @@
 #include "settings.cpp"
 #include "../utils/file_utils.cpp"
 #include "../ui/colour_entry_area.cpp"
+#include "../ui/slider.cpp"
 
 namespace settings {
   using namespace ui;
@@ -14,8 +15,12 @@ namespace settings {
   {
     private:
       Settings* settings;
+
+      Slider volumeSlider;
+
       ColourEntryArea backgroundColourTextArea;
 
+      std::vector<Slider*> sliders;
       std::vector<TextArea*> textAreas;
 
       float margin;
@@ -32,6 +37,7 @@ namespace settings {
       void OnWindowResized(vec2);
       void Draw();
 
+      void SetVolume(float);
       void SetBackgroundColour(const char*);
   };
 
@@ -39,7 +45,13 @@ namespace settings {
     settings{settings}, margin{margin}, spacing{spacing}
   {
     backgroundColourTextArea = ColourEntryArea();
-    backgroundColourTextArea.onSubmit = [this](const char* s){SetBackgroundColour(s);};
+    backgroundColourTextArea.onSubmit = std::bind(SetBackgroundColour, this, _1);
+
+    volumeSlider = Slider();
+    volumeSlider.onHandleReleased = std::bind(SetVolume, this, _1);
+
+    sliders = {&volumeSlider};
+    for (Slider* sliderPointer : sliders) sliderPointer->BindHandleCallbacks();
 
     textAreas = {&backgroundColourTextArea};
     OnWindowResized(screenSize);
@@ -47,6 +59,8 @@ namespace settings {
 
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
+    for (Slider* sliderPointer : sliders)
+      sliderPointer->SetStyle(normalColour, hoverColour, thickness);
     for (TextArea* textAreaPointer : textAreas)
       textAreaPointer->SetStyle(normalColour, hoverColour, thickness);
   }
@@ -58,16 +72,24 @@ namespace settings {
     waveGridSettingsModified = false;
 
     vec2 mousePosition = GetMousePosition();
+    for (Slider* sliderPointer : sliders)
+      sliderPointer->Update(mousePosition);
     for (TextArea* textAreaPointer : textAreas)
       textAreaPointer->Update(mousePosition);
   }
 
   void SettingsMenu::OnWindowResized(vec2 screenSize)
   {
-    rect placementRect = rect(vec2(2 * margin), vec2(margin - 12));
-    placementRect.origin = vec2(2 * margin);
-    placementRect.size = vec2(screenSize.x - 4 * margin, 2 * margin);
+    rect placementRect = rect(vec2(2 * margin), vec2(margin / 2));
+    placementRect.size.x = screenSize.x - 4 * margin;
 
+    for (Slider* sliderPointer : sliders)
+    {
+      sliderPointer->SetShape(placementRect, vec2(margin / 2, margin));
+      placementRect.origin.y += 2 * margin + spacing;
+    }
+
+    placementRect.size.y = 2 * margin;
     for (TextArea* textAreaPointer : textAreas)
     {
       textAreaPointer->SetArea(placementRect);
@@ -77,8 +99,15 @@ namespace settings {
 
   void SettingsMenu::Draw() 
   {
+    for (Slider* sliderPointer : sliders)
+      sliderPointer->Draw();
     for (TextArea* textAreaPointer : textAreas)
       textAreaPointer->Draw();
+  }
+
+  void SettingsMenu::SetVolume(float sliderValue)
+  {
+    std::cout << "Setting Volume: " << sliderValue << "\n";
   }
 
   void SettingsMenu::SetBackgroundColour(const char* colourString)

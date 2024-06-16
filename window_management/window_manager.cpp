@@ -43,17 +43,17 @@ namespace window_management {
     margin{margin}, buttonSpacing{buttonSpacing}
   {
     closeProgramButton = Button();
-    closeProgramButton.onRelease = [this](){CloseProgram();};
+    closeProgramButton.onRelease = std::bind(CloseProgram, this);
 
     toggleSettingsMenuButton = Button();
-    toggleSettingsMenuButton.onPress = [this](){ToggleSettingsMenu();};
+    toggleSettingsMenuButton.onPress = std::bind(ToggleSettingsMenu, this);
 
     moveButton = DragButton(vec2(-1, -1));
-    moveButton.onDrag = [this](vec2 offset){MoveWindow(offset);};
+    moveButton.onDrag = std::bind(MoveWindow, this, _1);
     moveButton.holdKey = KEY_SPACE;
 
     resizeButton = DragButton(UP);
-    resizeButton.onDrag = [this, minimumSize](vec2 offset){ResizeWindow(offset, minimumSize);};
+    resizeButton.onDrag = std::bind(ResizeWindow, this, _1, minimumSize);
     resizeButton.holdKey = KEY_R;
 
     buttons = {&closeProgramButton, &toggleSettingsMenuButton, &moveButton, &resizeButton};

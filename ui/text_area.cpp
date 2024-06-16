@@ -7,6 +7,7 @@ namespace ui {
 #ifndef TEXT_AREA
 #define TEXT_AREA
   using namespace utils;
+  typedef std::function<void(const char*)> BoundStringCallback;
 
   class TextArea
   {
@@ -24,10 +25,10 @@ namespace ui {
       float fontSize;
 
     public:
-      std::function<void(const char*)> onEdit;
-      std::function<void(const char*)> onSubmit;
-      std::function<void()> onFocusGained;
-      std::function<void()> onFocusLost;
+      BoundStringCallback onEdit;
+      BoundStringCallback onSubmit;
+      BoundCallback onFocusGained;
+      BoundCallback onFocusLost;
 
       std::string text;
       int maximumCharacters = 8;

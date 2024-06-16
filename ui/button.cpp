@@ -6,6 +6,8 @@ namespace ui {
 #ifndef BUTTON
 #define BUTTON
   using namespace utils;
+  using namespace std::placeholders;
+  typedef std::function<void()> BoundCallback;
 
   class Button
   {
@@ -23,39 +25,33 @@ namespace ui {
       float borderThickness;
 
     public:
-      std::function<void()> onPress;
-      std::function<void()> onRelease;
-      bool isHovered;
-      bool isPressed;
+      BoundCallback onPress;
+      BoundCallback onRelease;
+      bool isHovered = false;
+      bool isPressed = false;
 
       Button();
-      Button(rect, std::function<void()>, std::function<void()>);
-      Button(vec2, vec2, std::function<void()>, std::function<void()>);
+      Button(rect);
+      Button(vec2, vec2);
       
       void LoadResources(const char*);
       void UnloadResources();
       void SetStyle(Color, Color, float, float);
       void SetArea(rect);
+      vec2 GetCentrePosition();
+      void SetCentrePosition(vec2);
       virtual void Update(vec2);
-      virtual void OnPressed();
-      virtual void OnReleased();
-      virtual void OnReleasedWithoutHover();
+      virtual void Press();
+      virtual void Release();
+      virtual void ReleaseWithoutHover();
       void LerpRotation();
       virtual void Draw();
       void DrawWithColour(Color);
   };
 
-  Button::Button(): area{rect()}, onPress{[](){}}, onRelease{[](){}} {};
-
-  Button::Button(rect area,
-      std::function<void()> onPress = [](){},
-      std::function<void()> onRelease = [](){}):
-    area{area}, onPress{onPress}, onRelease{onRelease} {};
-
-  Button::Button(vec2 origin, vec2 size,
-      std::function<void()> onPress = [](){},
-      std::function<void()> onRelease = [](){}):
-    area{rect(origin, size)}, onPress{onPress}, onRelease{onRelease} {};
+  Button::Button(): area{rect()} {};
+  Button::Button(rect area): area{area} {};
+  Button::Button(vec2 origin, vec2 size): area{rect(origin, size)} {};
 
 
   void Button::LoadResources(const char* texturePath)
@@ -85,6 +81,17 @@ namespace ui {
     this->area = area;
     textureScale = area.size.y / texture.height;
   }
+  
+  vec2 Button::GetCentrePosition()
+  {
+    return area.GetCentre();
+  }
+
+  void Button::SetCentrePosition(vec2 position)
+  {
+    area.SetCentre(position);
+  }
+
 
   void Button::Update(vec2 mousePosition)
   {
@@ -93,16 +100,16 @@ namespace ui {
     bool isMousePressed = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
     if (isHovered) {
       if (isPressed && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-        OnReleased();
+        Release();
       else if (canPress && !isPressed && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        OnPressed();
+        Press();
     }
     else {
       if (!isMousePressed)
       {
         canPress = true;
         if (isPressed)
-          OnReleasedWithoutHover();
+          ReleaseWithoutHover();
       }
       else if (!isPressed)
         canPress = false;
@@ -111,19 +118,19 @@ namespace ui {
     LerpRotation();
   }
 
-  void Button::OnPressed()
+  void Button::Press()
   {
     isPressed = true;
-    onPress();
+    if (onPress) onPress();
   }
 
-  void Button::OnReleased()
+  void Button::Release()
   {
     isPressed = false;
-    onRelease();
+    if (onRelease) onRelease();
   }
 
-  void Button::OnReleasedWithoutHover()
+  void Button::ReleaseWithoutHover()
   {
     isPressed = false;
   }
