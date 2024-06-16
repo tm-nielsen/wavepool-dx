@@ -97,7 +97,7 @@ namespace ui {
     bool mouseContained = area.ContainsPoint(mousePosition);
     isHovered = mouseContained;
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
       if (!isFocused && mouseContained)
         GainFocus();
