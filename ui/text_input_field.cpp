@@ -10,7 +10,7 @@ namespace ui {
     private:
       float caretBlinkPeriod;
       float caretBlinkTimer;
-      bool shouldDrawCaret;
+      bool shouldDrawCaret = false;
 
     protected:
       float margin;

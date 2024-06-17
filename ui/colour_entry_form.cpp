@@ -71,7 +71,7 @@ namespace ui {
   {
     textArea.onEdit = std::bind(OnTextAreaEdited, this, _1);
     textArea.onSubmit = std::bind(OnTextAreaSubmitted, this, _1);
-    submitButton.onPress = std::bind(OnSubmitButtonPressed, this);
+    submitButton.onRelease = std::bind(OnSubmitButtonPressed, this);
   }
 
   void ColourEntryForm::SetStyle(Color normal, Color hovered, float thickness)
