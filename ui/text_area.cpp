@@ -27,7 +27,7 @@ namespace ui {
       BoundCallback onFocusGained;
       BoundCallback onFocusLost;
 
-      std::string text;
+      std::string text = "";
       int maximumCharacters = 8;
       bool isHovered = false;
       bool isFocused = false;
@@ -52,24 +52,9 @@ namespace ui {
       void DrawCaret(vec2, Color);
   };
 
-  TextArea::TextArea(): area{rect()}
-  {
-    text = "";
-    onEdit = onSubmit = [](const char* s){};
-    onFocusGained = onFocusLost = [](){};
-  }
-
-  TextArea::TextArea(rect area)
-  {
-    TextArea();
-    this->area = area;
-  }
-
-  TextArea::TextArea(vec2 origin, vec2 size)
-  {
-    TextArea();
-    area = rect(origin, size);
-  }
+  TextArea::TextArea(): area{rect()} {}
+  TextArea::TextArea(rect area) { SetArea(area); }
+  TextArea::TextArea(vec2 origin, vec2 size) { SetArea(rect(origin, size)); }
 
   
   void TextArea::SetStyle(Color normal, Color hovered,
@@ -167,12 +152,12 @@ namespace ui {
 
   void TextArea::NotifyEdit()
   {
-    onEdit(text.c_str());
+    if (onEdit) onEdit(text.c_str());
   }
 
   void TextArea::Submit()
   {
-    onSubmit(text.c_str());
+    if (onSubmit) onSubmit(text.c_str());
     LoseFocus();
   }
 
@@ -181,14 +166,14 @@ namespace ui {
     isFocused = true;
     shouldDrawCaret = true;
     caretBlinkTimer = 0;
-    onFocusGained;
+    if (onFocusGained) onFocusGained();;
   }
 
   void TextArea::LoseFocus()
   {
     isFocused = false;
     shouldDrawCaret = false;
-    onFocusLost();
+    if (onFocusLost) onFocusLost();
   }
 
   void TextArea::Draw()

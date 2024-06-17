@@ -4,7 +4,7 @@
 #include <iostream>
 #include "settings.cpp"
 #include "../utils/file_utils.cpp"
-#include "../ui/colour_entry_area.cpp"
+#include "../ui/colour_entry_form.cpp"
 #include "../ui/slider.cpp"
 
 namespace settings {
@@ -18,10 +18,10 @@ namespace settings {
 
       Slider volumeSlider;
 
-      ColourEntryArea backgroundColourTextArea;
+      ColourEntryForm backgroundColourForm;
 
       std::vector<Slider*> sliders;
-      std::vector<TextArea*> textAreas;
+      std::vector<ColourEntryForm*> colourEntryForms;
 
       float margin;
       float spacing;
@@ -38,22 +38,26 @@ namespace settings {
       void Draw();
 
       void SetVolume(float);
-      void SetBackgroundColour(const char*);
+      void SetBackgroundColour(Color);
   };
 
   SettingsMenu::SettingsMenu(Settings* settings, vec2 screenSize, float margin, float spacing = 12):
     settings{settings}, margin{margin}, spacing{spacing}
   {
-    backgroundColourTextArea = ColourEntryArea();
-    backgroundColourTextArea.onSubmit = std::bind(SetBackgroundColour, this, _1);
+    backgroundColourForm = ColourEntryForm("Bg:");
+    backgroundColourForm.onSubmit = std::bind(SetBackgroundColour, this, _1);
 
     volumeSlider = Slider();
     volumeSlider.onHandleReleased = std::bind(SetVolume, this, _1);
 
     sliders = {&volumeSlider};
-    for (Slider* sliderPointer : sliders) sliderPointer->BindHandleCallbacks();
+    for (Slider* sliderPointer : sliders)
+      sliderPointer->BindHandleCallbacks();
 
-    textAreas = {&backgroundColourTextArea};
+    colourEntryForms = {&backgroundColourForm};
+    for (ColourEntryForm* colourFormPointer : colourEntryForms)
+      colourFormPointer->BindCallbacks();
+
     OnWindowResized(screenSize);
   }
 
@@ -61,8 +65,8 @@ namespace settings {
   {
     for (Slider* sliderPointer : sliders)
       sliderPointer->SetStyle(normalColour, hoverColour, thickness);
-    for (TextArea* textAreaPointer : textAreas)
-      textAreaPointer->SetStyle(normalColour, hoverColour, thickness);
+    for (ColourEntryForm* colourFormPointer : colourEntryForms)
+      colourFormPointer->SetStyle(normalColour, hoverColour, thickness);
   }
 
   void SettingsMenu::Update()
@@ -74,8 +78,8 @@ namespace settings {
     vec2 mousePosition = GetMousePosition();
     for (Slider* sliderPointer : sliders)
       sliderPointer->Update(mousePosition);
-    for (TextArea* textAreaPointer : textAreas)
-      textAreaPointer->Update(mousePosition);
+    for (ColourEntryForm* colourFormPointer : colourEntryForms)
+      colourFormPointer->Update(mousePosition);
   }
 
   void SettingsMenu::OnWindowResized(vec2 screenSize)
@@ -89,11 +93,11 @@ namespace settings {
       placementRect.origin.y += 2 * margin + spacing;
     }
 
-    placementRect.size.y = 2 * margin;
-    for (TextArea* textAreaPointer : textAreas)
+    placementRect.size.y = 1.5 * margin;
+    for (ColourEntryForm* colourFormPointer : colourEntryForms)
     {
-      textAreaPointer->SetArea(placementRect);
-      placementRect.origin.y += 2 * margin + spacing;
+      colourFormPointer->SetArea(placementRect);
+      placementRect.origin.y += 1.5 * margin + spacing;
     }
   }
 
@@ -101,8 +105,8 @@ namespace settings {
   {
     for (Slider* sliderPointer : sliders)
       sliderPointer->Draw();
-    for (TextArea* textAreaPointer : textAreas)
-      textAreaPointer->Draw();
+    for (ColourEntryForm* colourFormPointer : colourEntryForms)
+      colourFormPointer->Draw();
   }
 
   void SettingsMenu::SetVolume(float sliderValue)
@@ -110,9 +114,9 @@ namespace settings {
     std::cout << "Setting Volume: " << sliderValue << "\n";
   }
 
-  void SettingsMenu::SetBackgroundColour(const char* colourString)
+  void SettingsMenu::SetBackgroundColour(Color colour)
   {
-    Color colour = utils::GetColourFromString(colourString);
+    // Color colour = utils::GetColourFromString(colourString);
 
     Vector4 colourVector = ColorNormalize(colour);
     std::cout << "Setting Background Colour: (";

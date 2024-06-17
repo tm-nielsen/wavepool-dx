@@ -59,9 +59,16 @@ namespace utils {
         DrawRectangleLinesEx(ToRectangle(), thickness, colour);
       }
 
-      void DrawRounded(float thickness, Color colour, float roundness = 0.075, int segments = 4)
-      {
+      void DrawRounded(float thickness, Color colour, float roundness = 0.075, int segments = 4) {
         DrawRectangleRoundedLines(ToRectangle(), roundness, segments, thickness, colour);
+      }
+
+      void DrawFilled(Color colour) {
+        DrawRectangle(origin.x, origin.y, size.x, size.y, colour);
+      }
+      
+      void DrawRoundedFilled(Color colour, float roundness = 0.15, int segments = 4) {
+        DrawRectangleRounded(ToRectangle(), roundness, segments, colour);
       }
 
       void DrawHorizontalBorders(float thickness, Color colour) {
