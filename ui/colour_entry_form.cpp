@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "colour_entry_area.cpp"
+#include "colour_input_field.cpp"
 #include "../utils/file_utils.cpp"
 #include "button.cpp"
 #include "label.cpp"
@@ -8,7 +8,7 @@ namespace ui {
   class ColourEntryForm
   {
     private:
-      ColourEntryArea textArea;
+      ColourEntryField textArea;
       Button submitButton;
       Label label;
       rect previewArea;
@@ -37,7 +37,7 @@ namespace ui {
 
   ColourEntryForm::ColourEntryForm()
   {
-    textArea = ColourEntryArea();
+    textArea = ColourEntryField();
     submitButton = Button();
     label = Label();
   }

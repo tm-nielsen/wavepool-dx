@@ -1,7 +1,7 @@
-#include "text_area.cpp"
+#include "text_input_field.cpp"
 
 namespace ui {
-  class ColourEntryArea: public TextArea
+  class ColourEntryField: public TextInputField
   {
     void PasteFromClipboard() override;
     void CopyToClipboard() override;
@@ -9,19 +9,19 @@ namespace ui {
     vec2 DrawEnteredText(Color) override;
   };
 
-  void ColourEntryArea::PasteFromClipboard()
+  void ColourEntryField::PasteFromClipboard()
   {
-    TextArea::PasteFromClipboard();
+    TextInputField::PasteFromClipboard();
     if (text[0] == '#')
       text = text.substr(1, text.length() -1);
   }
 
-  void ColourEntryArea::CopyToClipboard()
+  void ColourEntryField::CopyToClipboard()
   {
     SetClipboardText(("#" + text).c_str());
   }
 
-  bool ColourEntryArea::IsCharacterValid(char c)
+  bool ColourEntryField::IsCharacterValid(char c)
   {
     bool isHexLetter = c >= 'a' && c <= 'f';
     isHexLetter |= c >= 'A' && c <= 'F';
@@ -29,7 +29,7 @@ namespace ui {
     return isHexLetter || isNumber;
   }
 
-  vec2 ColourEntryArea::DrawEnteredText(Color colour)
+  vec2 ColourEntryField::DrawEnteredText(Color colour)
   {
     vec2 textPosition = area.origin + margin;
     Color prefixColour = isFocused? normalColour: colour;

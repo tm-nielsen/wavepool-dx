@@ -4,9 +4,9 @@
 #include "../utils/rect.cpp"
 
 namespace ui {
-#ifndef TEXT_AREA
-#define TEXT_AREA
-  class TextArea
+#ifndef TEXT_INPUT_FIELD
+#define TEXT_INPUT_FIELD
+  class TextInputField
   {
     private:
       float borderThickness;
@@ -32,9 +32,9 @@ namespace ui {
       bool isHovered = false;
       bool isFocused = false;
 
-      TextArea();
-      TextArea(rect);
-      TextArea(vec2, vec2);
+      TextInputField();
+      TextInputField(rect);
+      TextInputField(vec2, vec2);
 
       void SetStyle(Color, Color, float, float, float);
       void SetArea(rect);
@@ -52,12 +52,12 @@ namespace ui {
       void DrawCaret(vec2, Color);
   };
 
-  TextArea::TextArea(): area{rect()} {}
-  TextArea::TextArea(rect area) { SetArea(area); }
-  TextArea::TextArea(vec2 origin, vec2 size) { SetArea(rect(origin, size)); }
+  TextInputField::TextInputField(): area{rect()} {}
+  TextInputField::TextInputField(rect area) { SetArea(area); }
+  TextInputField::TextInputField(vec2 origin, vec2 size) { SetArea(rect(origin, size)); }
 
   
-  void TextArea::SetStyle(Color normal, Color hovered,
+  void TextInputField::SetStyle(Color normal, Color hovered,
     float thickness, float fontMargin = 12, float blinkPeriod = 0.5)
   {
     normalColour = normal;
@@ -68,13 +68,13 @@ namespace ui {
     fontSize = area.size.y - 2 * margin;
   }
 
-  void TextArea::SetArea(rect area)
+  void TextInputField::SetArea(rect area)
   {
     this->area = area;
     fontSize = area.size.y - 2 * margin;
   }
 
-  void TextArea::Update(vec2 mousePosition)
+  void TextInputField::Update(vec2 mousePosition)
   {
     bool mouseContained = area.ContainsPoint(mousePosition);
     isHovered = mouseContained;
@@ -91,7 +91,7 @@ namespace ui {
       ProcessTextEntry();
   }
 
-  void TextArea::ProcessTextEntry()
+  void TextInputField::ProcessTextEntry()
   {
     caretBlinkTimer += GetFrameTime();
     if (caretBlinkTimer > caretBlinkPeriod) {
@@ -135,33 +135,33 @@ namespace ui {
     }
   }
 
-  void TextArea::PasteFromClipboard()
+  void TextInputField::PasteFromClipboard()
   {
     text = GetClipboardText();
   }
 
-  void TextArea::CopyToClipboard()
+  void TextInputField::CopyToClipboard()
   {
     SetClipboardText(text.c_str());
   }
 
-  bool TextArea::IsCharacterValid(char c)
+  bool TextInputField::IsCharacterValid(char c)
   {
     return c > 32 && c < 125;
   }
 
-  void TextArea::NotifyEdit()
+  void TextInputField::NotifyEdit()
   {
     if (onEdit) onEdit(text.c_str());
   }
 
-  void TextArea::Submit()
+  void TextInputField::Submit()
   {
     if (onSubmit) onSubmit(text.c_str());
     LoseFocus();
   }
 
-  void TextArea::GainFocus()
+  void TextInputField::GainFocus()
   {
     isFocused = true;
     shouldDrawCaret = true;
@@ -169,14 +169,14 @@ namespace ui {
     if (onFocusGained) onFocusGained();;
   }
 
-  void TextArea::LoseFocus()
+  void TextInputField::LoseFocus()
   {
     isFocused = false;
     shouldDrawCaret = false;
     if (onFocusLost) onFocusLost();
   }
 
-  void TextArea::Draw()
+  void TextInputField::Draw()
   {
     Color colour = isHovered? hoveredColour: normalColour;
     if (isFocused)
@@ -188,14 +188,14 @@ namespace ui {
     DrawCaret(textEndPosition, colour);
   }
 
-  vec2 TextArea::DrawEnteredText(Color colour)
+  vec2 TextInputField::DrawEnteredText(Color colour)
   {
     vec2 textPosition = area.origin + margin;
     DrawText(text.c_str(), textPosition.x, textPosition.y, fontSize, colour);
     return textPosition + RIGHT * MeasureText(text.c_str(), fontSize);
   }
 
-  void TextArea::DrawCaret(vec2 textEndPosition, Color colour)
+  void TextInputField::DrawCaret(vec2 textEndPosition, Color colour)
   {
     if (shouldDrawCaret) {
       vec2 caretPosition = textEndPosition + RIGHT * margin;
