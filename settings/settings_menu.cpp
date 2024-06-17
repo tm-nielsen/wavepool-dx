@@ -32,6 +32,9 @@ namespace settings {
       bool waveGridSettingsModified = false;
 
       SettingsMenu(Settings*, vec2, float, float);
+      void LoadResources();
+      void UnloadResources();
+
       void SetStyle(Color, Color, float);
       void Update();
       void OnWindowResized(vec2);
@@ -59,6 +62,18 @@ namespace settings {
       colourFormPointer->BindCallbacks();
 
     OnWindowResized(screenSize);
+  }
+
+  void SettingsMenu::LoadResources()
+  {
+    for (ColourEntryForm* colourFormPointer : colourEntryForms)
+      colourFormPointer->LoadResources();
+  }
+
+  void SettingsMenu::UnloadResources()
+  {
+    for (ColourEntryForm* colourFormPointer : colourEntryForms)
+      colourFormPointer->UnloadResources();
   }
 
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)

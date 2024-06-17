@@ -76,7 +76,7 @@ namespace ui {
     float thickness, float fontMargin = 12, float blinkPeriod = 0.5)
   {
     textArea.SetStyle(normal, hovered, thickness, fontMargin, blinkPeriod);
-    submitButton.SetStyle(normal, hovered, thickness);
+    submitButton.SetStyle(normal, hovered, thickness, 15);
     label.SetStyle(normal, fontMargin);
   }
 

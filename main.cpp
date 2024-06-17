@@ -34,6 +34,7 @@ int main(void)
     windowManager.SetStyle(settings.guideColour, settings.mainColour, 6);
 
     SettingsMenu settingsMenu = SettingsMenu(&settings, screenSize, margin);
+    settingsMenu.LoadResources();
     settingsMenu.SetStyle(settings.guideColour, settings.mainColour, 6);
 
     WavePool wavePool = WavePool(screenSize, margin,
@@ -92,6 +93,7 @@ int main(void)
     }
     // De-Initialization
     windowManager.UnloadResources();
+    settingsMenu.UnloadResources();
     radialInstrument.UnloadSounds();
     CloseAudioDevice();
     CloseWindow();
