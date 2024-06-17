@@ -13,12 +13,12 @@ namespace settings {
   */
   struct Settings
   {
-    float volume = 1.0;
+    float volume = 0.5;
 
     bool fullscreen = false;
-    float windowWidth = 800;
-    float windowHeight = 800;
-    float margin = 40;
+    int windowWidth = 600;
+    int windowHeight = 600;
+    int margin = 40;
 
     float dotSize = 6;
     float dotSpacing = 16;
@@ -35,7 +35,7 @@ namespace settings {
       utils::ConcatenateLine(fileText, volume);
       utils::ConcatenateLine(fileText, fullscreen);
 
-      float windowValues [] = {windowWidth, windowHeight, margin};
+      int windowValues [] = {windowWidth, windowHeight, margin};
       utils::ConcatenateLine(fileText, windowValues);
 
       float gridValues [] = {dotSize, dotSpacing};

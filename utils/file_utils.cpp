@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include <sstream>
+#include <iomanip>
 #include <string>
 #include <cstring>
 #include <vector>
@@ -33,13 +34,6 @@ namespace utils {
     return GetColor(hexValue);
   }
 
-  const char* GetColourString(Color colour)
-  {
-    std::stringstream ss;
-    ss << std::hex << ColorToInt(colour);
-    return ss.str().c_str();
-  }
-
   std::vector<std::string> SplitString(std::string s, std::string delimeter = ", ")
   {
     std::vector<std::string> result;
@@ -52,6 +46,31 @@ namespace utils {
     return result;
   }
 
+  std::string GetString(Color colour)
+  {
+    std::stringstream ss;
+    ss << std::hex << ColorToInt(colour);
+    return ss.str();
+  }
+
+  std::string GetString(float value)
+  {
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << value;
+    return ss.str().c_str();
+  }
+
+  std::string GetString(bool value)
+  {
+    return value? "1": "0";
+  }
+
+  template <class T>
+  std::string GetString(T value)
+  {
+    return std::to_string(value);
+  }
+
   void ConcatenateLine(char* s, const char* newLine)
   {
     strcat(s, newLine);
@@ -61,27 +80,7 @@ namespace utils {
   template <class T>
   void ConcatenateLine(char* s, T value)
   {
-    strcat(s, std::to_string(value).c_str());
-    strcat(s, "\n");
-  }
-
-  void ConcatenateLine(char* s, bool value)
-  {
-    strcat(s, value? "1": "0");
-    strcat(s, "\n");
-  }
-
-  template <size_t N>
-  void ConcatenateLine(char* s, Color (&colours)[N], const char* delimeter = ", ")
-  {
-    if (N == 0)
-      return;
-    strcat(s, GetColourString(colours[0]));
-    for (int i = 1; i < N; i++)
-    {
-      strcat(s, delimeter);
-      strcat(s, GetColourString(colours[i]));
-    }
+    strcat(s, GetString(value).c_str());
     strcat(s, "\n");
   }
 
@@ -90,11 +89,11 @@ namespace utils {
   {
     if (N == 0)
       return;
-    std::string joinedString = std::to_string(values[0]);
+    std::string joinedString = GetString(values[0]);
     for (int i = 1; i < N; i++)
     {
       joinedString += delimeter;
-      joinedString += std::to_string(values[i]);
+      joinedString += GetString(values[i]);
     }
     ConcatenateLine(s, joinedString.c_str());
   }
