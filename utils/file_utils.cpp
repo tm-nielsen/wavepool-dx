@@ -8,10 +8,20 @@ namespace utils {
 #ifndef FILE_UTILITIES
 #define FILE_UTILITIES
 
+  std::string ExpandShorthandHexString(std::string hexString)
+  {
+    std::stringstream expandedHexString;
+    for (char hexCharacter : hexString)
+      expandedHexString << hexCharacter << hexCharacter;
+    return expandedHexString.str();
+  }
+
   Color GetColourFromString(std::string hexString)
   {
     if (hexString[0] == '#')
       hexString.erase(0, 1);
+    if (hexString.length() == 3 || hexString.length() == 4)
+      hexString = ExpandShorthandHexString(hexString);
     if (hexString.length() == 6)
       hexString += "ff";
 
