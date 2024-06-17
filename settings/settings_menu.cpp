@@ -80,7 +80,7 @@ namespace settings {
   void SettingsMenu::LoadResources()
   {
     resetSettingsButton.LoadResources("");
-    toggleFpsButton.LoadResources("resources/icons/confirm_icon.png");
+    toggleFpsButton.LoadResources("resources/icons/close_icon.png");
 
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->LoadResources();
@@ -97,7 +97,7 @@ namespace settings {
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
     for (Button* buttonPointer : buttons)
-      buttonPointer->SetStyle(normalColour, hoverColour, thickness, 15);
+      buttonPointer->SetStyle(normalColour, hoverColour, thickness);
 
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->SetStyle(normalColour, hoverColour, thickness);
