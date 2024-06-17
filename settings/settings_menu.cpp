@@ -7,6 +7,7 @@
 #include "../ui/colour_entry_form.cpp"
 #include "../ui/slider.cpp"
 #include "../ui/labelled_button.cpp"
+#include "../ui/toggle_button.cpp"
 
 namespace settings {
   using namespace ui;
@@ -23,6 +24,9 @@ namespace settings {
 
       LabelledButton resetSettingsButton;
 
+      ToggleButton toggleFpsButton;
+
+      std::vector<Button*> buttons;
       std::vector<CompositeUIElement*> compositeElements;
 
       float margin;
@@ -44,6 +48,7 @@ namespace settings {
 
       void SetVolume(float);
       void SetBackgroundColour(Color);
+      void ToggleShowFps();
       void ResetSettings();
   };
 
@@ -56,12 +61,18 @@ namespace settings {
     backgroundColourForm = ColourEntryForm("Bg:");
     backgroundColourForm.onSubmit = std::bind(SetBackgroundColour, this, _1);
 
-    resetSettingsButton = LabelledButton("Reset to Default");
-    resetSettingsButton.onRelease = std::bind(ResetSettings, this);
-
     compositeElements = {&volumeSlider, &backgroundColourForm};
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->BindCallbacks();
+
+
+    resetSettingsButton = LabelledButton("Reset to Default");
+    resetSettingsButton.onRelease = std::bind(ResetSettings, this);
+
+    toggleFpsButton = ToggleButton();
+    toggleFpsButton.onPress = std::bind(ToggleShowFps, this);
+
+    buttons = {&resetSettingsButton, &toggleFpsButton};
 
     OnWindowResized(screenSize);
   }
@@ -69,19 +80,25 @@ namespace settings {
   void SettingsMenu::LoadResources()
   {
     resetSettingsButton.LoadResources("");
+    toggleFpsButton.LoadResources("resources/icons/confirm_icon.png");
+
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->LoadResources();
   }
 
   void SettingsMenu::UnloadResources()
   {
+    toggleFpsButton.UnloadResources();
+
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->UnloadResources();
   }
 
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
-    resetSettingsButton.SetStyle(normalColour, hoverColour, thickness);
+    for (Button* buttonPointer : buttons)
+      buttonPointer->SetStyle(normalColour, hoverColour, thickness, 15);
+
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->SetStyle(normalColour, hoverColour, thickness);
   }
@@ -93,7 +110,9 @@ namespace settings {
     waveGridSettingsModified = false;
 
     vec2 mousePosition = GetMousePosition();
-    resetSettingsButton.Update(mousePosition);
+    for (Button* buttonPointer : buttons)
+      buttonPointer->Update(mousePosition);
+
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->Update(mousePosition);
   }
@@ -119,11 +138,18 @@ namespace settings {
     }
 
     resetSettingsButton.SetArea(placementRect);
+
+    placementRect.origin.y += 2 * margin + spacing;
+    placementRect.size.x = placementRect.size.y;
+    toggleFpsButton.SetArea(placementRect);
+    // toggleFpsButton.SetArea(rect(vec2(400), vec2(40)));
   }
 
   void SettingsMenu::Draw() 
   {
-    resetSettingsButton.Draw();
+    for (Button* buttonPointer : buttons)
+      buttonPointer->Draw();
+
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->Draw();
   }
@@ -144,6 +170,11 @@ namespace settings {
     std::cout << colourVector.z << ", ";
     std::cout << colourVector.w << ")\n";
     coloursModified = true;
+  }
+
+  void SettingsMenu::ToggleShowFps()
+  {
+    std::cout << "Setting show fps to: " << toggleFpsButton.isToggled << std::endl;
   }
 
   void SettingsMenu::ResetSettings()

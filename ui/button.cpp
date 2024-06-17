@@ -10,7 +10,7 @@ namespace ui {
       Texture texture;
       float textureScale;
       float hoverRotation;
-      float textureRotation;
+      float textureRotation = 0;
       bool canPress;
 
     public:
@@ -23,7 +23,7 @@ namespace ui {
       
       void LoadResources(const char*);
       void UnloadResources();
-      void SetStyle(Color, Color, float, float);
+      virtual void SetStyle(Color, Color, float, float);
       void SetArea(rect);
       virtual void Update(vec2);
       virtual void Press();
@@ -31,7 +31,8 @@ namespace ui {
       virtual void ReleaseWithoutHover();
       void LerpRotation();
       virtual void Draw();
-      void DrawWithColour(Color);
+      virtual void DrawWithColour(Color);
+      void DrawTexture(Color);
   };
 
   Button::Button(rect buttonArea = rect()) { SetArea(buttonArea); }
@@ -122,7 +123,11 @@ namespace ui {
   void Button::DrawWithColour(Color colour)
   {
     area.DrawRounded(borderThickness, colour);
+    DrawTexture(colour);
+  }
 
+  void Button::DrawTexture(Color colour)
+  {
     float finalTextureScale = textureScale;
     vec2 centre = area.origin + area.size / 2;
     vec2 texturePosition = area.origin.RotatedAroundPoint(centre, textureRotation);
