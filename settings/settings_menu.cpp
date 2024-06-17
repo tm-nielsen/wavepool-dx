@@ -6,6 +6,7 @@
 #include "../utils/file_utils.cpp"
 #include "../ui/colour_entry_form.cpp"
 #include "../ui/slider.cpp"
+#include "../ui/labelled_button.cpp"
 
 namespace settings {
   using namespace ui;
@@ -20,7 +21,9 @@ namespace settings {
 
       ColourEntryForm backgroundColourForm;
 
-      std::vector<CompositeUIElement*> uiElements;
+      LabelledButton resetSettingsButton;
+
+      std::vector<CompositeUIElement*> compositeElements;
 
       float margin;
       float spacing;
@@ -41,19 +44,23 @@ namespace settings {
 
       void SetVolume(float);
       void SetBackgroundColour(Color);
+      void ResetSettings();
   };
 
   SettingsMenu::SettingsMenu(Settings* settings, vec2 screenSize, float margin, float spacing = 12):
     settings{settings}, margin{margin}, spacing{spacing}
   {
-    backgroundColourForm = ColourEntryForm("Bg:");
-    backgroundColourForm.onSubmit = std::bind(SetBackgroundColour, this, _1);
-
     volumeSlider = Slider();
     volumeSlider.onHandleReleased = std::bind(SetVolume, this, _1);
 
-    uiElements = {&volumeSlider, &backgroundColourForm};
-    for (CompositeUIElement* elementPointer : uiElements)
+    backgroundColourForm = ColourEntryForm("Bg:");
+    backgroundColourForm.onSubmit = std::bind(SetBackgroundColour, this, _1);
+
+    resetSettingsButton = LabelledButton("Reset to Default");
+    resetSettingsButton.onRelease = std::bind(ResetSettings, this);
+
+    compositeElements = {&volumeSlider, &backgroundColourForm};
+    for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->BindCallbacks();
 
     OnWindowResized(screenSize);
@@ -61,19 +68,21 @@ namespace settings {
 
   void SettingsMenu::LoadResources()
   {
-    for (CompositeUIElement* elementPointer : uiElements)
+    resetSettingsButton.LoadResources("");
+    for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->LoadResources();
   }
 
   void SettingsMenu::UnloadResources()
   {
-    for (CompositeUIElement* elementPointer : uiElements)
+    for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->UnloadResources();
   }
 
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
-    for (CompositeUIElement* elementPointer : uiElements)
+    resetSettingsButton.SetStyle(normalColour, hoverColour, thickness);
+    for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->SetStyle(normalColour, hoverColour, thickness);
   }
 
@@ -84,7 +93,8 @@ namespace settings {
     waveGridSettingsModified = false;
 
     vec2 mousePosition = GetMousePosition();
-    for (CompositeUIElement* elementPointer : uiElements)
+    resetSettingsButton.Update(mousePosition);
+    for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->Update(mousePosition);
   }
 
@@ -107,11 +117,14 @@ namespace settings {
       colourFormPointer->SetArea(placementRect);
       placementRect.origin.y += 1.5 * margin + spacing;
     }
+
+    resetSettingsButton.SetArea(placementRect);
   }
 
   void SettingsMenu::Draw() 
   {
-    for (CompositeUIElement* elementPointer : uiElements)
+    resetSettingsButton.Draw();
+    for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->Draw();
   }
 
@@ -131,5 +144,10 @@ namespace settings {
     std::cout << colourVector.z << ", ";
     std::cout << colourVector.w << ")\n";
     coloursModified = true;
+  }
+
+  void SettingsMenu::ResetSettings()
+  {
+    std::cout << "Resetting Settings..." << std::endl;
   }
 }

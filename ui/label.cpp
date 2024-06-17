@@ -24,14 +24,13 @@ namespace ui {
       float GetTextLength();
       vec2 GetTextEnd();
       void Draw();
-      void Draw(vec2);
   };
 
   Label::Label(): text{"Label"} {};
   Label::Label(const char* text): text{text} {};
 
 
-  void Label::SetStyle(Color colour, float fontMargin)
+  void Label::SetStyle(Color colour, float fontMargin = 12)
   {
     normalColour = colour;
     margin = fontMargin;
@@ -65,11 +64,9 @@ namespace ui {
     return textOrigin + RIGHT * GetTextLength();
   }
 
-  void Label::Draw() { Draw(vec2()); }
-  void Label::Draw(vec2 offset)
+  void Label::Draw()
   {
     vec2 textPosition = area.origin + margin;
-    textPosition += offset;
     DrawText(text, textPosition.x, textPosition.y, fontSize, normalColour);
   }
 #endif
