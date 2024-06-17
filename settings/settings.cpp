@@ -6,37 +6,43 @@ namespace settings {
 
   /* Settings object saved as unlabelled plaintext values in the format:
   [volume]
-  [fullscreen]
-  [window width], [window height], [margin], 
+  [window width], [window height]
+  [margin], [line thickness]
   [dot radius], [dot spacing]
   [background colour], [guide colour], [main colour]
+  [display fps]
   */
   struct Settings
   {
     float volume = 0.5;
 
-    bool fullscreen = false;
     int windowWidth = 600;
     int windowHeight = 600;
-    int margin = 40;
 
-    float dotSize = 6;
-    float dotSpacing = 16;
+    float margin = 40;
+    float lineThickness = 6;
 
     Color backgroundColour = utils::GetColourFromString("#3e6990cc");
     Color guideColour = utils::GetColourFromString("#000000dd");
     Color mainColour = utils::GetColourFromString("#c0fdfb");
+
+    float dotSize = 6;
+    float dotSpacing = 16;
+
+    bool showFps = false;
 
 
     void SaveToFile(const char* path = SAVE_PATH)
     {
       char* fileText = new char [1000];
       *fileText = '\0';
-      utils::ConcatenateLine(fileText, volume);
-      utils::ConcatenateLine(fileText, fullscreen);
+      utils::ConcatenateLine(fileText, utils::GetString(volume, 2));
 
-      int windowValues [] = {windowWidth, windowHeight, margin};
+      int windowValues [] = {windowWidth, windowHeight};
       utils::ConcatenateLine(fileText, windowValues);
+
+      float styleValues [] = {margin, lineThickness};
+      utils::ConcatenateLine(fileText, styleValues);
 
       float gridValues [] = {dotSize, dotSpacing};
       utils::ConcatenateLine(fileText, gridValues);
@@ -44,6 +50,9 @@ namespace settings {
       Color colours [] = {backgroundColour, guideColour, mainColour};
       utils::ConcatenateLine(fileText, colours);
 
+      utils::ConcatenateLine(fileText, showFps);
+
+      fileText[strlen(fileText) - 1] = '\0';
       SaveFileText(path, fileText);
       delete fileText;
     }
@@ -64,18 +73,19 @@ namespace settings {
           {
             loadedSettings.volume = std::stof(fileTextLine);
           }
-          // fullscreen
-          if (std::getline(fileTextStream, fileTextLine, '\n'))
-          {
-            loadedSettings.fullscreen = std::stoi(fileTextLine);
-          }
           // window
           if (std::getline(fileTextStream, fileTextLine, '\n'))
           {
             auto windowStrings = utils::SplitString(fileTextLine);
             loadedSettings.windowWidth = std::stof(windowStrings[0]);
             loadedSettings.windowHeight = std::stof(windowStrings[1]);
-            loadedSettings.margin = std::stof(windowStrings[2]);
+          }
+          // style values
+          if (std::getline(fileTextStream, fileTextLine, '\n'))
+          {
+            auto styleStrings = utils::SplitString(fileTextLine);
+            loadedSettings.margin = std::stof(styleStrings[0]);
+            loadedSettings.lineThickness = std::stof(styleStrings[1]);
           }
           // dot size and spacing
           if (std::getline(fileTextStream, fileTextLine, '\n'))
@@ -91,6 +101,11 @@ namespace settings {
             loadedSettings.backgroundColour = utils::GetColourFromString(colourStrings[0]);
             loadedSettings.guideColour = utils::GetColourFromString(colourStrings[1]);
             loadedSettings.mainColour = utils::GetColourFromString(colourStrings[2]);
+          }
+          // show fps
+          if (std::getline(fileTextStream, fileTextLine, '\n'))
+          {
+            loadedSettings.showFps = std::stoi(fileTextLine);
           }
           return loadedSettings;
         }

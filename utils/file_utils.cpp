@@ -53,10 +53,10 @@ namespace utils {
     return ss.str();
   }
 
-  std::string GetString(float value)
+  std::string GetString(float value, int precision = 1)
   {
     std::stringstream ss;
-    ss << std::fixed << std::setprecision(2) << value;
+    ss << std::fixed << std::setprecision(precision) << value;
     return ss.str().c_str();
   }
 
@@ -75,6 +75,11 @@ namespace utils {
   {
     strcat(s, newLine);
     strcat(s, "\n");
+  }
+
+  void ConcatenateLine(char* s, std::string newLine)
+  {
+    strcat(s, (newLine + "\n").c_str());
   }
 
   template <class T>
