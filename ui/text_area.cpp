@@ -1,14 +1,11 @@
 #include "raylib.h"
 #include <string>
-#include <functional>
+#include "ui_callback_types.cpp"
 #include "../utils/rect.cpp"
 
 namespace ui {
 #ifndef TEXT_AREA
 #define TEXT_AREA
-  using namespace utils;
-  typedef std::function<void(const char*)> BoundStringCallback;
-
   class TextArea
   {
     private:

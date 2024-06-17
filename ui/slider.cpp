@@ -1,11 +1,8 @@
 #include "raylib.h"
-#include <functional>
-#include <iostream>
+#include "ui_callback_types.cpp"
 #include "drag_button.cpp"
 
 namespace ui {
-  typedef std::function<void(float)> BoundFloatCallback;
-
   class Slider
   {
     private:
@@ -64,7 +61,6 @@ namespace ui {
 
   void Slider::SetShape(rect area, vec2 handleSize)
   {
-    std::cout << "1\n";
     handle.SetArea(rect(vec2(), handleSize));
     
     dragArea = area;
@@ -99,7 +95,6 @@ namespace ui {
 
   void Slider::SetValue(float newValue)
   {
-    std::cout << 3 << "\n";
     value = newValue;
     float dragDistance = newValue * dragArea.size.x;
     handle.SetCentrePosition(dragArea.origin + RIGHT * dragDistance);

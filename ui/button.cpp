@@ -1,14 +1,10 @@
-#include <functional>
 #include "raylib.h"
+#include "ui_callback_types.cpp"
 #include "../utils/rect.cpp"
 
 namespace ui {
 #ifndef BUTTON
 #define BUTTON
-  using namespace utils;
-  using namespace std::placeholders;
-  typedef std::function<void()> BoundCallback;
-
   class Button
   {
     private:

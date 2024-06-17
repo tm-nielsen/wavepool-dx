@@ -3,10 +3,6 @@
 namespace ui {
 #ifndef DRAG_BUTTON
 #define DRAG_BUTTON
-  using namespace utils;
-
-  typedef std::function<void(vec2)> BoundVec2Callback;
-
   class DragButton : public Button
   {
     private:
