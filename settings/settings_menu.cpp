@@ -20,8 +20,7 @@ namespace settings {
 
       ColourEntryForm backgroundColourForm;
 
-      std::vector<Slider*> sliders;
-      std::vector<ColourEntryForm*> colourEntryForms;
+      std::vector<CompositeUIElement*> uiElements;
 
       float margin;
       float spacing;
@@ -53,35 +52,29 @@ namespace settings {
     volumeSlider = Slider();
     volumeSlider.onHandleReleased = std::bind(SetVolume, this, _1);
 
-    sliders = {&volumeSlider};
-    for (Slider* sliderPointer : sliders)
-      sliderPointer->BindHandleCallbacks();
-
-    colourEntryForms = {&backgroundColourForm};
-    for (ColourEntryForm* colourFormPointer : colourEntryForms)
-      colourFormPointer->BindCallbacks();
+    uiElements = {&volumeSlider, &backgroundColourForm};
+    for (CompositeUIElement* elementPointer : uiElements)
+      elementPointer->BindCallbacks();
 
     OnWindowResized(screenSize);
   }
 
   void SettingsMenu::LoadResources()
   {
-    for (ColourEntryForm* colourFormPointer : colourEntryForms)
-      colourFormPointer->LoadResources();
+    for (CompositeUIElement* elementPointer : uiElements)
+      elementPointer->LoadResources();
   }
 
   void SettingsMenu::UnloadResources()
   {
-    for (ColourEntryForm* colourFormPointer : colourEntryForms)
-      colourFormPointer->UnloadResources();
+    for (CompositeUIElement* elementPointer : uiElements)
+      elementPointer->UnloadResources();
   }
 
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
-    for (Slider* sliderPointer : sliders)
-      sliderPointer->SetStyle(normalColour, hoverColour, thickness);
-    for (ColourEntryForm* colourFormPointer : colourEntryForms)
-      colourFormPointer->SetStyle(normalColour, hoverColour, thickness);
+    for (CompositeUIElement* elementPointer : uiElements)
+      elementPointer->SetStyle(normalColour, hoverColour, thickness);
   }
 
   void SettingsMenu::Update()
@@ -91,10 +84,8 @@ namespace settings {
     waveGridSettingsModified = false;
 
     vec2 mousePosition = GetMousePosition();
-    for (Slider* sliderPointer : sliders)
-      sliderPointer->Update(mousePosition);
-    for (ColourEntryForm* colourFormPointer : colourEntryForms)
-      colourFormPointer->Update(mousePosition);
+    for (CompositeUIElement* elementPointer : uiElements)
+      elementPointer->Update(mousePosition);
   }
 
   void SettingsMenu::OnWindowResized(vec2 screenSize)
@@ -102,12 +93,14 @@ namespace settings {
     rect placementRect = rect(vec2(2 * margin), vec2(margin / 2));
     placementRect.size.x = screenSize.x - 4 * margin;
 
+    auto sliders = {&volumeSlider};
     for (Slider* sliderPointer : sliders)
     {
       sliderPointer->SetShape(placementRect, vec2(margin / 2, margin));
       placementRect.origin.y += 2 * margin + spacing;
     }
 
+    auto colourEntryForms = {&backgroundColourForm};
     placementRect.size.y = 1.5 * margin;
     for (ColourEntryForm* colourFormPointer : colourEntryForms)
     {
@@ -118,10 +111,8 @@ namespace settings {
 
   void SettingsMenu::Draw() 
   {
-    for (Slider* sliderPointer : sliders)
-      sliderPointer->Draw();
-    for (ColourEntryForm* colourFormPointer : colourEntryForms)
-      colourFormPointer->Draw();
+    for (CompositeUIElement* elementPointer : uiElements)
+      elementPointer->Draw();
   }
 
   void SettingsMenu::SetVolume(float sliderValue)

@@ -1,32 +1,23 @@
 #include "raylib.h"
-#include "ui_callback_types.cpp"
-#include "../utils/rect.cpp"
+#include "hoverable_ui_element.cpp"
 
 namespace ui {
 #ifndef BUTTON
 #define BUTTON
-  class Button
+  class Button: public HoverableUIElement
   {
     private:
-      rect area;
       Texture texture;
       float textureScale;
       float hoverRotation;
       float textureRotation;
       bool canPress;
 
-    protected:
-      Color normalColour;
-      Color hoveredColour;
-      float borderThickness;
-
     public:
       BoundCallback onPress;
       BoundCallback onRelease;
-      bool isHovered = false;
       bool isPressed = false;
 
-      Button();
       Button(rect);
       Button(vec2, vec2);
       
@@ -34,8 +25,6 @@ namespace ui {
       void UnloadResources();
       void SetStyle(Color, Color, float, float);
       void SetArea(rect);
-      vec2 GetCentrePosition();
-      void SetCentrePosition(vec2);
       virtual void Update(vec2);
       virtual void Press();
       virtual void Release();
@@ -45,9 +34,8 @@ namespace ui {
       void DrawWithColour(Color);
   };
 
-  Button::Button(): area{rect()} {};
-  Button::Button(rect area): area{area} {};
-  Button::Button(vec2 origin, vec2 size): area{rect(origin, size)} {};
+  Button::Button(rect buttonArea = rect()) { SetArea(buttonArea); }
+  Button::Button(vec2 origin, vec2 size) { SetArea(rect(origin, size)); }
 
 
   void Button::LoadResources(const char* texturePath)
@@ -66,26 +54,14 @@ namespace ui {
 
   void Button::SetStyle(Color normal, Color hovered, float thickness, float rotation = -90)
   {
-    normalColour = normal;
-    hoveredColour = hovered;
-    borderThickness = thickness;
+    HoverableUIElement::SetStyle(normal, hovered, thickness);
     hoverRotation = rotation;
   }
 
   void Button::SetArea(rect area)
   {
-    this->area = area;
+    UIElement::SetArea(area);
     textureScale = area.size.y / texture.height;
-  }
-  
-  vec2 Button::GetCentrePosition()
-  {
-    return area.GetCentre();
-  }
-
-  void Button::SetCentrePosition(vec2 position)
-  {
-    area.SetCentre(position);
   }
 
 

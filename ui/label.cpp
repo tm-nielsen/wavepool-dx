@@ -1,17 +1,15 @@
 #include "raylib.h"
-#include "../utils/rect.cpp"
+#include "ui_element.cpp"
 
 namespace ui {
 #ifndef LABEL
 #define LABEL
   using namespace utils;
 
-  class Label
+  class Label: public UIElement
   {
     private:
       const char* text;
-      Color colour;
-      rect area;
       float margin = 12;
       float fontSize = 20;
 
@@ -25,6 +23,7 @@ namespace ui {
       float GetFontSize();
       float GetTextLength();
       vec2 GetTextEnd();
+      void Draw();
       void Draw(vec2);
   };
 
@@ -32,10 +31,10 @@ namespace ui {
   Label::Label(const char* text): text{text} {};
 
 
-  void Label::SetStyle(Color colour, float margin)
+  void Label::SetStyle(Color colour, float fontMargin)
   {
-    this->colour = colour;
-    this->margin = margin;
+    normalColour = colour;
+    margin = fontMargin;
     fontSize = GetFontSize();
   }
 
@@ -66,11 +65,12 @@ namespace ui {
     return textOrigin + RIGHT * GetTextLength();
   }
 
-  void Label::Draw(vec2 offset = vec2())
+  void Label::Draw() { Draw(vec2()); }
+  void Label::Draw(vec2 offset)
   {
     vec2 textPosition = area.origin + margin;
     textPosition += offset;
-    DrawText(text, textPosition.x, textPosition.y, fontSize, colour);
+    DrawText(text, textPosition.x, textPosition.y, fontSize, normalColour);
   }
 #endif
 }

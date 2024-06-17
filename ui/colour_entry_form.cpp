@@ -1,18 +1,19 @@
 #include "raylib.h"
-#include "colour_input_field.cpp"
 #include "../utils/file_utils.cpp"
+#include "composite_ui_element.cpp"
+#include "colour_input_field.cpp"
 #include "button.cpp"
 #include "label.cpp"
 
 namespace ui {
-  class ColourEntryForm
+  class ColourEntryForm: public CompositeUIElement
   {
     private:
       ColourEntryField textArea;
       Button submitButton;
       Label label;
       rect previewArea;
-      Color colour;
+      Color enteredColour;
       
 
     public:
@@ -26,6 +27,7 @@ namespace ui {
       void UnloadResources();
       void BindCallbacks();
       
+      void SetStyle(Color, Color, float);
       void SetStyle(Color, Color, float, float, float);
       void SetArea(rect, float);
       void Update(vec2);
@@ -72,8 +74,12 @@ namespace ui {
     submitButton.onPress = std::bind(OnSubmitButtonPressed, this);
   }
 
+  void ColourEntryForm::SetStyle(Color normal, Color hovered, float thickness)
+  {
+    SetStyle(normal, hovered, thickness, 12, 0.5);
+  }
   void ColourEntryForm::SetStyle(Color normal, Color hovered,
-    float thickness, float fontMargin = 12, float blinkPeriod = 0.5)
+    float thickness, float fontMargin, float blinkPeriod)
   {
     textArea.SetStyle(normal, hovered, thickness, fontMargin, blinkPeriod);
     submitButton.SetStyle(normal, hovered, thickness, 15);
@@ -113,24 +119,24 @@ namespace ui {
 
   void ColourEntryForm::OnTextAreaEdited(const char* hexString)
   {
-    colour = GetColourFromString(hexString);
+    enteredColour = GetColourFromString(hexString);
   }
 
   void ColourEntryForm::OnTextAreaSubmitted(const char* hexString)
   {
-    colour = GetColourFromString(hexString);
-    if (onSubmit) onSubmit(colour);
+    enteredColour = GetColourFromString(hexString);
+    if (onSubmit) onSubmit(enteredColour);
   }
 
   void ColourEntryForm::OnSubmitButtonPressed()
   {
-    if (onSubmit) onSubmit(colour);
+    if (onSubmit) onSubmit(enteredColour);
   }
 
   void ColourEntryForm::Draw()
   {
     label.Draw();
-    previewArea.DrawRoundedFilled(colour);
+    previewArea.DrawRoundedFilled(enteredColour);
     textArea.Draw();
     submitButton.Draw();
   }

@@ -1,23 +1,18 @@
 #include "raylib.h"
 #include <string>
-#include "ui_callback_types.cpp"
-#include "../utils/rect.cpp"
+#include "hoverable_ui_element.cpp"
 
 namespace ui {
 #ifndef TEXT_INPUT_FIELD
 #define TEXT_INPUT_FIELD
-  class TextInputField
+  class TextInputField: public HoverableUIElement
   {
     private:
-      float borderThickness;
       float caretBlinkPeriod;
       float caretBlinkTimer;
       bool shouldDrawCaret;
 
     protected:
-      rect area;
-      Color normalColour;
-      Color hoveredColour;
       float margin;
       float fontSize;
 
@@ -29,10 +24,8 @@ namespace ui {
 
       std::string text = "";
       int maximumCharacters = 8;
-      bool isHovered = false;
       bool isFocused = false;
 
-      TextInputField();
       TextInputField(rect);
       TextInputField(vec2, vec2);
 
@@ -52,17 +45,14 @@ namespace ui {
       void DrawCaret(vec2, Color);
   };
 
-  TextInputField::TextInputField(): area{rect()} {}
-  TextInputField::TextInputField(rect area) { SetArea(area); }
+  TextInputField::TextInputField(rect textArea = rect()) { SetArea(textArea); }
   TextInputField::TextInputField(vec2 origin, vec2 size) { SetArea(rect(origin, size)); }
 
   
   void TextInputField::SetStyle(Color normal, Color hovered,
     float thickness, float fontMargin = 12, float blinkPeriod = 0.5)
   {
-    normalColour = normal;
-    hoveredColour = hovered;
-    borderThickness = thickness;
+    HoverableUIElement::SetStyle(normal, hovered, thickness);
     margin = fontMargin;
     caretBlinkPeriod = blinkPeriod;
     fontSize = area.size.y - 2 * margin;
@@ -70,20 +60,19 @@ namespace ui {
 
   void TextInputField::SetArea(rect area)
   {
-    this->area = area;
+    UIElement::SetArea(area);
     fontSize = area.size.y - 2 * margin;
   }
 
   void TextInputField::Update(vec2 mousePosition)
   {
-    bool mouseContained = area.ContainsPoint(mousePosition);
-    isHovered = mouseContained;
+    HoverableUIElement::Update(mousePosition);
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-      if (!isFocused && mouseContained)
+      if (!isFocused && isHovered)
         GainFocus();
-      else if (isFocused && !mouseContained)
+      else if (isFocused && !isHovered)
         LoseFocus();
     }
 

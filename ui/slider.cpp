@@ -1,18 +1,14 @@
 #include "raylib.h"
-#include "ui_callback_types.cpp"
+#include "composite_ui_element.cpp"
 #include "drag_button.cpp"
 
 namespace ui {
-  class Slider
+  class Slider: public CompositeUIElement
   {
     private:
       DragButton handle;
       rect dragArea;
       rect backgroundRect;
-
-      Color normalColour;
-      Color hoveredColour;
-      float borderThickness;
 
     public:
       BoundFloatCallback onValueChanged;
@@ -21,7 +17,9 @@ namespace ui {
 
       Slider();
       Slider(rect, vec2);
-      void BindHandleCallbacks();
+      void BindCallbacks();
+      void LoadResources() {};
+      void UnloadResources() {};
 
       void SetStyle(Color, Color, float);
       void SetShape(rect, vec2);
@@ -45,7 +43,7 @@ namespace ui {
     SetShape(area, handleSize);
   }
 
-  void Slider::BindHandleCallbacks()
+  void Slider::BindCallbacks()
   {
     handle.onDrag = std::bind(OnHandleMoved, this, _1);
     handle.onDragFinished = std::bind(OnHandleMovementFinished, this, _1);
@@ -53,9 +51,7 @@ namespace ui {
 
   void Slider::SetStyle(Color normal, Color hovered, float thickness)
   {
-    normalColour = normal;
-    hoveredColour = hovered;
-    borderThickness = thickness;
+    UIElement::SetStyle(normal, thickness);
     handle.SetStyle(normal, hovered, thickness);
   }
 
