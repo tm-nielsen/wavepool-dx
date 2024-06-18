@@ -9,11 +9,13 @@ namespace utils {
 #ifndef FILE_UTILITIES
 #define FILE_UTILITIES
 
-  std::string ExpandShorthandHexString(std::string hexString)
+  std::string ExpandShorthandHexString(std::string hexString, int repetitions = 2)
   {
     std::stringstream expandedHexString;
-    for (char hexCharacter : hexString)
-      expandedHexString << hexCharacter << hexCharacter;
+    for (char hexCharacter : hexString) {
+      for (int i = 0; i < repetitions; i++)
+        expandedHexString << hexCharacter;
+    }
     return expandedHexString.str();
   }
 
@@ -21,6 +23,15 @@ namespace utils {
   {
     if (hexString[0] == '#')
       hexString.erase(0, 1);
+    // abbreviated as #v
+    if (hexString.length() == 1)
+      hexString = ExpandShorthandHexString(hexString, 6);
+    // abbreviated as #va
+    if (hexString.length() == 2) {
+      std::string expandedHexString = ExpandShorthandHexString(hexString.substr(0, 1), 3);
+      hexString = expandedHexString + hexString[1];
+    }
+    // abbreviated as #rgb or #rgba
     if (hexString.length() == 3 || hexString.length() == 4)
       hexString = ExpandShorthandHexString(hexString);
     if (hexString.length() == 6)
@@ -50,7 +61,11 @@ namespace utils {
   {
     std::stringstream ss;
     ss << std::hex << ColorToInt(colour);
-    return ss.str();
+    std::string hexString = ss.str();
+
+    while (hexString.length() < 8)
+      hexString = "0" + hexString;
+    return hexString;
   }
 
   std::string GetString(float value, int precision = 1)
