@@ -29,6 +29,9 @@ namespace ui {
       void OnHandleMovementFinished(vec2);
       void SetValue(float);
       void Draw();
+
+      static float MapNormalizedValueToRange(float, float, float);
+      static float GetNormalizedValueFromRange(float, float, float);
   };
 
   Slider::Slider()
@@ -101,6 +104,16 @@ namespace ui {
   {
     backgroundRect.DrawRounded(borderThickness, normalColour);
     handle.Draw();
+  }
+
+  float Slider::MapNormalizedValueToRange(float normalizedValue, float rangeStart, float rangeEnd)
+  {
+    return rangeStart + normalizedValue * (rangeEnd - rangeStart);
+  }
+
+  float Slider::GetNormalizedValueFromRange(float mappedValue, float rangeStart, float rangeEnd)
+  {
+    return (mappedValue - rangeStart) / (rangeEnd - rangeStart);
   }
 #endif
 }

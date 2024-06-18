@@ -196,10 +196,23 @@ namespace settings {
   void SettingsMenu::ApplyLoadedSettings()
   {
     volumeSlider.SetValue(settings->volume);
-    // set grid slider values
-    // set colour form values
-    // set window value sliders
-    toggleFpsButton.isToggled = settings->showFps;
+
+    float sliderValue;
+    sliderValue = Slider::GetNormalizedValueFromRange(settings->dotSize, 1, 20);
+    gridRadiusSlider.SetValue(sliderValue);
+    sliderValue = Slider::GetNormalizedValueFromRange(settings->dotSpacing, 4, 40);
+    gridSpacingSlider.SetValue(sliderValue);
+    
+    mainColourForm.SetEnteredColour(settings->mainColour);
+    backgroundColourForm.SetEnteredColour(settings->backgroundColour);
+    accentColourForm.SetEnteredColour(settings->guideColour);
+    
+    sliderValue = Slider::GetNormalizedValueFromRange(settings->margin, 10, 100);
+    marginSlider.SetValue(sliderValue);
+    sliderValue = Slider::GetNormalizedValueFromRange(settings->lineThickness, 0, 10);
+    borderThicknessSlider.SetValue(sliderValue);
+
+    toggleFpsButton.SetIsToggled(settings->showFps);
   }
 
   void SettingsMenu::SetVolume(float sliderValue)
@@ -212,7 +225,7 @@ namespace settings {
 
   void SettingsMenu::SetGridRadius(float sliderValue)
   {
-    float radius = 1 + sliderValue * 19;
+    float radius = Slider::MapNormalizedValueToRange(sliderValue, 1, 20);
     settings->dotSize = radius;
     settings->SaveToFile();
 
@@ -221,7 +234,7 @@ namespace settings {
 
   void SettingsMenu::SetGridSpacing(float sliderValue)
   {
-    float spacing = 4 + sliderValue * 36;
+    float spacing = Slider::MapNormalizedValueToRange(sliderValue, 4, 40);
     settings->dotSpacing = spacing;
     settings->SaveToFile();
     
@@ -254,7 +267,7 @@ namespace settings {
 
   void SettingsMenu::SetMargin(float sliderValue)
   {
-    settings->margin = 10 + sliderValue * 90;
+    settings->margin = Slider::MapNormalizedValueToRange(sliderValue, 10, 100);
     settings->SaveToFile();
 
     marginSettingModified = true;
@@ -262,7 +275,7 @@ namespace settings {
 
   void SettingsMenu::SetBorderThickness(float sliderValue)
   {
-    settings->lineThickness = 0 + sliderValue * 10;
+    settings->lineThickness = Slider::MapNormalizedValueToRange(sliderValue, 0, 10);
     settings->SaveToFile();
 
     styleSettingsModifed = true;

@@ -8,10 +8,10 @@ namespace ui {
     private:
       ToggleButton toggleButton;
       Label label;
+      bool isToggled = false;
 
     public:
       BoundBooleanCallback onToggle;
-      bool isToggled = false;
 
       LabelledToggleButton(const char*);
 
@@ -22,6 +22,7 @@ namespace ui {
       void SetStyle(Color, Color, float);
       void SetArea(rect);
       void SetArea(rect, float);
+      void SetIsToggled(bool);
       void Update(vec2);
       void OnButtonToggled(bool);
       void Draw();
@@ -68,6 +69,12 @@ namespace ui {
     rect labelArea = area;
     labelArea.size.x -= buttonArea.size.x;
     label.SetArea(labelArea);
+  }
+
+  void LabelledToggleButton::SetIsToggled(bool value)
+  {
+    isToggled = value;
+    toggleButton.isToggled = value;
   }
 
   void LabelledToggleButton::Update(vec2 mousePosition)

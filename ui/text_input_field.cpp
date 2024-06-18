@@ -31,6 +31,7 @@ namespace ui {
 
       void SetStyle(Color, Color, float, float, float);
       void SetArea(rect);
+      void SetText(std::string);
       void Update(vec2);
       void ProcessTextEntry();
       virtual void PasteFromClipboard();
@@ -62,6 +63,11 @@ namespace ui {
   {
     UIElement::SetArea(area);
     fontSize = area.size.y - 2 * margin;
+  }
+
+  void TextInputField::SetText(std::string newText)
+  {
+    text = newText;
   }
 
   void TextInputField::Update(vec2 mousePosition)

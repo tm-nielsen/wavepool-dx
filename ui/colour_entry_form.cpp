@@ -9,7 +9,7 @@ namespace ui {
   class ColourEntryForm: public CompositeUIElement
   {
     private:
-      ColourEntryField textArea;
+      ColourEntryField textField;
       Button submitButton;
       Label label;
       rect previewArea;
@@ -30,6 +30,7 @@ namespace ui {
       void SetStyle(Color, Color, float);
       void SetStyle(Color, Color, float, float, float);
       void SetArea(rect);
+      void SetEnteredColour(Color);
       void Update(vec2);
       void OnTextAreaEdited(const char*);
       void OnTextAreaSubmitted(const char*);
@@ -39,7 +40,7 @@ namespace ui {
 
   ColourEntryForm::ColourEntryForm()
   {
-    textArea = ColourEntryField();
+    textField = ColourEntryField();
     submitButton = Button();
     label = Label();
   }
@@ -69,8 +70,8 @@ namespace ui {
 
   void ColourEntryForm::BindCallbacks()
   {
-    textArea.onEdit = std::bind(OnTextAreaEdited, this, _1);
-    textArea.onSubmit = std::bind(OnTextAreaSubmitted, this, _1);
+    textField.onEdit = std::bind(OnTextAreaEdited, this, _1);
+    textField.onSubmit = std::bind(OnTextAreaSubmitted, this, _1);
     submitButton.onRelease = std::bind(OnSubmitButtonPressed, this);
   }
 
@@ -82,7 +83,7 @@ namespace ui {
     float thickness, float fontMargin, float blinkPeriod)
   {
     borderThickness = thickness;
-    textArea.SetStyle(normal, hovered, thickness, fontMargin, blinkPeriod);
+    textField.SetStyle(normal, hovered, thickness, fontMargin, blinkPeriod);
     submitButton.SetStyle(normal, hovered, thickness, 15);
     label.SetStyle(normal, fontMargin);
   }
@@ -99,7 +100,7 @@ namespace ui {
     rect textEntryArea = area;
     textEntryArea.origin.x += labelArea.size.x;
     textEntryArea.size.x /= 2;
-    textArea.SetArea(textEntryArea);
+    textField.SetArea(textEntryArea);
 
     rect submitButtonRect = area;
     submitButtonRect.size.x = area.size.y;
@@ -112,9 +113,16 @@ namespace ui {
     previewArea = remainingArea;
   }
 
+  void ColourEntryForm::SetEnteredColour(Color colour)
+  {
+    enteredColour = colour;
+    std::string colourString = utils::GetString(colour);
+    textField.SetText(colourString);
+  }
+
   void ColourEntryForm::Update(vec2 mousePosition)
   {
-    textArea.Update(mousePosition);
+    textField.Update(mousePosition);
     submitButton.Update(mousePosition);
   }
 
@@ -138,7 +146,7 @@ namespace ui {
   {
     label.Draw();
     previewArea.DrawRoundedFilled(enteredColour);
-    textArea.Draw();
+    textField.Draw();
     submitButton.Draw();
   }
 }
