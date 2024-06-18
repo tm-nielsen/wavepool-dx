@@ -5,10 +5,9 @@
 #include "settings.cpp"
 #include "../utils/file_utils.cpp"
 #include "../ui/colour_entry_form.cpp"
-#include "../ui/slider.cpp"
-#include "../ui/text_button.cpp"
-#include "../ui/toggle_button.cpp"
 #include "../ui/labelled_slider.cpp"
+#include "../ui/labelled_toggle_button.cpp"
+#include "../ui/text_button.cpp"
 
 namespace settings {
   using namespace ui;
@@ -31,7 +30,7 @@ namespace settings {
       LabelledSlider marginSlider;
       LabelledSlider borderThicknessSlider;
 
-      ToggleButton toggleFpsButton;
+      LabelledToggleButton toggleFpsButton;
       TextButton resetSettingsButton;
 
       float margin;
@@ -61,7 +60,7 @@ namespace settings {
       void SetAccentColour(Color);
       void SetMargin(float);
       void SetBorderThickness(float);
-      void ToggleShowFps();
+      void ToggleShowFps(bool);
       void ResetSettings();
   };
 
@@ -103,18 +102,20 @@ namespace settings {
     elements.push_back(&borderThicknessSlider);
 
 
+    toggleFpsButton = LabelledToggleButton("Show FPS");
+    toggleFpsButton.onToggle = std::bind(ToggleShowFps, this, _1);
+    elements.push_back(&toggleFpsButton);
+
+
     std::vector<CompositeUIElement*> compositeElements = {
-      &volumeSlider, &gridRadiusSlider, &gridSpacingSlider,
+      &volumeSlider, &toggleFpsButton,
+      &gridRadiusSlider, &gridSpacingSlider,
       &marginSlider, &borderThicknessSlider,
       &mainColourForm, &backgroundColourForm, &accentColourForm
     };
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->BindCallbacks();
 
-
-    toggleFpsButton = ToggleButton();
-    toggleFpsButton.onPress = std::bind(ToggleShowFps, this);
-    elements.push_back(&toggleFpsButton);
 
     resetSettingsButton = TextButton("Reset to Default");
     resetSettingsButton.onRelease = std::bind(ResetSettings, this);
@@ -125,8 +126,7 @@ namespace settings {
 
   void SettingsMenu::LoadResources()
   {
-    resetSettingsButton.LoadResources("");
-    toggleFpsButton.LoadResources("resources/icons/close_icon.png");
+    toggleFpsButton.LoadResources();
     mainColourForm.LoadResources();
     backgroundColourForm.LoadResources();
     accentColourForm.LoadResources();
@@ -235,9 +235,9 @@ namespace settings {
 
   }
 
-  void SettingsMenu::ToggleShowFps()
+  void SettingsMenu::ToggleShowFps(bool isToggled)
   {
-    std::cout << "Setting show fps to: " << toggleFpsButton.isToggled << std::endl;
+    std::cout << "Setting show fps to: " << isToggled << std::endl;
   }
 
   void SettingsMenu::ResetSettings()

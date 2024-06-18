@@ -10,6 +10,7 @@ using namespace std::placeholders;
 using namespace utils;
 
 typedef std::function<void()> BoundCallback;
+typedef std::function<void(bool)> BoundBooleanCallback;
 typedef std::function<void(float)> BoundFloatCallback;
 typedef std::function<void(vec2)> BoundVec2Callback;
 typedef std::function<void(const char*)> BoundStringCallback;

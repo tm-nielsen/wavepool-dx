@@ -19,6 +19,7 @@ namespace ui {
 
       void SetStyle(Color, Color, float);
       void SetArea(rect);
+      void SetArea(rect, float);
       void Update(vec2);
       void OnSliderValueChanged(float);
       void OnSliderHandleReleased();
@@ -47,8 +48,10 @@ namespace ui {
 
   void LabelledSlider::SetArea(rect area)
   {
-    const float labelShare = 0.5;
-
+    SetArea(area, 0.5);
+  }
+  void LabelledSlider::SetArea(rect area, float labelShare)
+  {
     rect labelArea = area;
     labelArea.size.x *= labelShare;
     label.SetArea(labelArea);

@@ -7,6 +7,7 @@ namespace ui {
   class ToggleButton: public Button
   {
     public:
+      BoundBooleanCallback onToggle;
       bool isToggled = false;
 
       void Press();
@@ -16,6 +17,7 @@ namespace ui {
   void ToggleButton::Press()
   {
     isToggled = !isToggled;
+    if (onToggle) onToggle(isToggled);
     Button::Press();
   }
 
