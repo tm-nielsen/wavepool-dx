@@ -205,7 +205,7 @@ namespace settings {
     backgroundColourForm.SetEnteredColour(settings->backgroundColour);
     accentColourForm.SetEnteredColour(settings->accentColour);
     
-    sliderValue = Slider::GetNormalizedValueFromRange(settings->margin, 10, 100);
+    sliderValue = Slider::GetNormalizedValueFromRange(settings->margin, 20, 100);
     marginSlider.SetValue(sliderValue);
     sliderValue = Slider::GetNormalizedValueFromRange(settings->lineThickness, 0, 10);
     thicknessSlider.SetValue(sliderValue);
@@ -265,7 +265,7 @@ namespace settings {
 
   void SettingsMenu::SetMargin(float sliderValue)
   {
-    settings->margin = Slider::MapNormalizedValueToRange(sliderValue, 10, 100);
+    settings->margin = Slider::MapNormalizedValueToRange(sliderValue, 20, 100);
     settings->SaveToFile();
 
     marginSettingModified = true;
