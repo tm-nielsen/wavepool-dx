@@ -30,9 +30,9 @@ namespace ui {
   Label::Label(const char* text): text{text} {};
 
 
-  void Label::SetStyle(Color colour, float fontMargin = 12)
+  void Label::SetStyle(Color fontColour, float fontMargin = 12)
   {
-    normalColour = colour;
+    baseColour = fontColour;
     margin = fontMargin;
     fontSize = GetFontSize();
   }
@@ -67,7 +67,7 @@ namespace ui {
   void Label::Draw()
   {
     vec2 textPosition = area.origin + margin;
-    DrawText(text, textPosition.x, textPosition.y, fontSize, normalColour);
+    DrawText(text, textPosition.x, textPosition.y, fontSize, baseColour);
   }
 #endif
 }

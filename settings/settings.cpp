@@ -23,7 +23,7 @@ namespace settings {
     float lineThickness = 6;
 
     Color backgroundColour = utils::GetColourFromString("#3e6990cc");
-    Color guideColour = utils::GetColourFromString("#000000dd");
+    Color accentColour = utils::GetColourFromString("#000000dd");
     Color mainColour = utils::GetColourFromString("#c0fdfb");
 
     float dotSize = 6;
@@ -47,7 +47,7 @@ namespace settings {
       float gridValues [] = {dotSize, dotSpacing};
       utils::ConcatenateLine(fileText, gridValues);
 
-      Color colours [] = {backgroundColour, guideColour, mainColour};
+      Color colours [] = {backgroundColour, accentColour, mainColour};
       utils::ConcatenateLine(fileText, colours);
 
       utils::ConcatenateLine(fileText, showFps);
@@ -99,7 +99,7 @@ namespace settings {
           {
             auto colourStrings = utils::SplitString(fileTextLine);
             loadedSettings.backgroundColour = utils::GetColourFromString(colourStrings[0]);
-            loadedSettings.guideColour = utils::GetColourFromString(colourStrings[1]);
+            loadedSettings.accentColour = utils::GetColourFromString(colourStrings[1]);
             loadedSettings.mainColour = utils::GetColourFromString(colourStrings[2]);
           }
           // show fps

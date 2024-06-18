@@ -10,7 +10,7 @@ namespace ui {
   {
     protected:
       rect area;
-      Color normalColour;
+      Color baseColour;
       float borderThickness;
 
     public:
@@ -32,7 +32,7 @@ namespace ui {
 
   void UIElement::SetStyle(Color colour, float thickness)
   {
-    normalColour = colour;
+    baseColour = colour;
     borderThickness = thickness;
   }
 

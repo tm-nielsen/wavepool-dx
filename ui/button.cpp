@@ -116,7 +116,7 @@ namespace ui {
 
   void Button::Draw()
   {
-    Color colour = isHovered? hoveredColour: normalColour;
+    Color colour = isHovered? hoveredColour: baseColour;
     DrawWithColour(colour);
   }
 

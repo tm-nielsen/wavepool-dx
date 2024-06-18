@@ -42,10 +42,10 @@ namespace ui {
 
   void TextButton::Draw()
   {
-    Color drawColour = isHovered? hoveredColour: normalColour;
+    Color colour = isHovered? hoveredColour: baseColour;
     float fontMargin = borderThickness * (isPressed? 3: 2);
-    DrawWithColour(drawColour);
-    label.SetStyle(drawColour, fontMargin);
+    DrawWithColour(colour);
+    label.SetStyle(colour, fontMargin);
     label.Draw();
   }
 }

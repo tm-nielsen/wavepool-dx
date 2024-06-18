@@ -173,14 +173,13 @@ namespace ui {
 
   void TextInputField::Draw()
   {
-    Color colour = isHovered? hoveredColour: normalColour;
-    if (isFocused)
-      colour = hoveredColour;
-    Color borderColour = isFocused? normalColour: colour;
+    Color colour = isHovered? hoveredColour: baseColour;
+    if (isFocused) colour = hoveredColour;
+    Color borderColour = isFocused? baseColour: colour;
     area.DrawRounded(borderThickness, borderColour);
 
-    vec2 textEndPosition = DrawEnteredText(colour);
-    DrawCaret(textEndPosition, colour);
+    vec2 textEndPosition = DrawEnteredText(baseColour);
+    DrawCaret(textEndPosition, baseColour);
   }
 
   vec2 TextInputField::DrawEnteredText(Color colour)

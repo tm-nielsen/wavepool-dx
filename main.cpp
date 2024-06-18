@@ -19,7 +19,7 @@ int main(void)
 
     Color mainColour = settings.mainColour;
     Color backgroundColour = settings.backgroundColour;
-    Color guideColour = settings.guideColour;
+    Color accentColour = settings.accentColour;
     float lineThickness = settings.lineThickness;
 
 
@@ -36,11 +36,11 @@ int main(void)
 
     WindowManager windowManager = WindowManager(screenSize, vec2(500), margin);
     windowManager.LoadResources();
-    windowManager.SetStyle(guideColour, mainColour, lineThickness);
+    windowManager.SetStyle(accentColour, mainColour, lineThickness);
 
     SettingsMenu settingsMenu = SettingsMenu(&settings, screenSize, margin);
     settingsMenu.LoadResources();
-    settingsMenu.SetStyle(guideColour, mainColour, lineThickness);
+    settingsMenu.SetStyle(accentColour, mainColour, lineThickness);
 
     WavePool wavePool = WavePool(screenSize, margin,
         settings.dotSize, settings.dotSpacing, mainColour);
@@ -68,11 +68,11 @@ int main(void)
         {
             mainColour = settings.mainColour;
             backgroundColour = settings.backgroundColour;
-            guideColour = settings.guideColour;
+            accentColour = settings.accentColour;
             lineThickness = settings.lineThickness;
 
-            windowManager.SetStyle(guideColour, mainColour, lineThickness);
-            settingsMenu.SetStyle(guideColour, mainColour, lineThickness);
+            windowManager.SetStyle(accentColour, mainColour, lineThickness);
+            settingsMenu.SetStyle(accentColour, mainColour, lineThickness);
             wavePool.SetColour(mainColour);
         }
         if (settingsMenu.waveGridSettingsModified)
@@ -106,7 +106,7 @@ int main(void)
         }
         else
         {
-            radialInstrument.DrawGuides(guideColour, lineThickness);
+            radialInstrument.DrawGuides(accentColour, lineThickness);
             wavePool.Draw();
         }
         if (settings.showFps)

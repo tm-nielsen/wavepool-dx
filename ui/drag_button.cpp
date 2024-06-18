@@ -71,7 +71,7 @@ namespace ui {
 
   void DragButton::Draw()
   {
-    Color colour = isHovered? hoveredColour: normalColour;
+    Color colour = isHovered? hoveredColour: baseColour;
     if (isPressed) colour = hoveredColour;
     DrawWithColour(colour);
   }

@@ -20,15 +20,15 @@ namespace settings {
       std::vector<UIElement*> elements;
 
       LabelledSlider volumeSlider;
-      LabelledSlider gridRadiusSlider;
-      LabelledSlider gridSpacingSlider;
+      LabelledSlider dotSizeSlider;
+      LabelledSlider dotSpacingSlider;
 
       ColourEntryForm mainColourForm;
       ColourEntryForm backgroundColourForm;
       ColourEntryForm accentColourForm;
 
       LabelledSlider marginSlider;
-      LabelledSlider borderThicknessSlider;
+      LabelledSlider thicknessSlider;
 
       LabelledToggleButton toggleFpsButton;
       TextButton resetSettingsButton;
@@ -72,13 +72,13 @@ namespace settings {
     volumeSlider.onHandleReleased = std::bind(SetVolume, this, _1);
     elements.push_back(&volumeSlider);
 
-    gridRadiusSlider = LabelledSlider("Radius");
-    gridRadiusSlider.onHandleReleased = std::bind(SetGridRadius, this, _1);
-    elements.push_back(&gridRadiusSlider);
+    dotSizeSlider = LabelledSlider("Dot Size");
+    dotSizeSlider.onHandleReleased = std::bind(SetGridRadius, this, _1);
+    elements.push_back(&dotSizeSlider);
 
-    gridSpacingSlider = LabelledSlider("Spacing");
-    gridSpacingSlider.onHandleReleased = std::bind(SetGridSpacing, this, _1);
-    elements.push_back(&gridSpacingSlider);
+    dotSpacingSlider = LabelledSlider("Spacing");
+    dotSpacingSlider.onHandleReleased = std::bind(SetGridSpacing, this, _1);
+    elements.push_back(&dotSpacingSlider);
 
 
     mainColourForm = ColourEntryForm("Main:");
@@ -98,9 +98,9 @@ namespace settings {
     marginSlider.onHandleReleased = std::bind(SetMargin, this, _1);
     elements.push_back(&marginSlider);
 
-    borderThicknessSlider = LabelledSlider("Line W");
-    borderThicknessSlider.onHandleReleased = std::bind(SetBorderThickness, this, _1);
-    elements.push_back(&borderThicknessSlider);
+    thicknessSlider = LabelledSlider("Line W");
+    thicknessSlider.onHandleReleased = std::bind(SetBorderThickness, this, _1);
+    elements.push_back(&thicknessSlider);
 
 
     toggleFpsButton = LabelledToggleButton("Show FPS");
@@ -110,8 +110,8 @@ namespace settings {
 
     std::vector<CompositeUIElement*> compositeElements = {
       &volumeSlider, &toggleFpsButton,
-      &gridRadiusSlider, &gridSpacingSlider,
-      &marginSlider, &borderThicknessSlider,
+      &dotSizeSlider, &dotSpacingSlider,
+      &marginSlider, &thicknessSlider,
       &mainColourForm, &backgroundColourForm, &accentColourForm
     };
     for (CompositeUIElement* elementPointer : compositeElements)
@@ -199,18 +199,18 @@ namespace settings {
 
     float sliderValue;
     sliderValue = Slider::GetNormalizedValueFromRange(settings->dotSize, 1, 20);
-    gridRadiusSlider.SetValue(sliderValue);
+    dotSizeSlider.SetValue(sliderValue);
     sliderValue = Slider::GetNormalizedValueFromRange(settings->dotSpacing, 4, 40);
-    gridSpacingSlider.SetValue(sliderValue);
+    dotSpacingSlider.SetValue(sliderValue);
     
     mainColourForm.SetEnteredColour(settings->mainColour);
     backgroundColourForm.SetEnteredColour(settings->backgroundColour);
-    accentColourForm.SetEnteredColour(settings->guideColour);
+    accentColourForm.SetEnteredColour(settings->accentColour);
     
     sliderValue = Slider::GetNormalizedValueFromRange(settings->margin, 10, 100);
     marginSlider.SetValue(sliderValue);
     sliderValue = Slider::GetNormalizedValueFromRange(settings->lineThickness, 0, 10);
-    borderThicknessSlider.SetValue(sliderValue);
+    thicknessSlider.SetValue(sliderValue);
 
     toggleFpsButton.SetIsToggled(settings->showFps);
   }
@@ -259,7 +259,7 @@ namespace settings {
 
   void SettingsMenu::SetAccentColour(Color colour)
   {
-    settings->guideColour = colour;
+    settings->accentColour = colour;
     settings->SaveToFile();
 
     styleSettingsModifed = true;

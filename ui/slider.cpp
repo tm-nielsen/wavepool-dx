@@ -102,7 +102,7 @@ namespace ui {
 
   void Slider::Draw()
   {
-    backgroundRect.DrawRounded(borderThickness, normalColour);
+    backgroundRect.DrawRounded(borderThickness, baseColour);
     handle.Draw();
   }
 
