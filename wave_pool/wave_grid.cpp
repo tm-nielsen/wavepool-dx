@@ -9,11 +9,11 @@ namespace wave_pool {
   {
     private:
       vec2 origin;
-      vec2 spacing;
+      vec2 unusedSpace;
 
       Color colour;
       float dotSize;
-      float separation;
+      float spacing;
 
       int columns;
       int rows;
@@ -28,28 +28,30 @@ namespace wave_pool {
       void DrawWarpedGrid(std::function<vec2(vec2)>);
   };
   
-  WaveGrid::WaveGrid(): origin{vec2()}, colour{WHITE}, dotSize{5}, separation{10}, columns{0}, rows{0} {}
-  WaveGrid::WaveGrid(vec2 origin, vec2 size, float separation, float dotSize, Color colour):
-    colour{colour}, dotSize{dotSize}, separation{separation}
+  WaveGrid::WaveGrid(): origin{vec2()}, colour{WHITE}, dotSize{5}, spacing{10}, columns{0}, rows{0} {}
+  WaveGrid::WaveGrid(vec2 origin, vec2 size, float spacing, float dotSize, Color colour):
+    origin{origin}, colour{colour}, dotSize{dotSize}, spacing{spacing}
   {
-    this->origin = origin + dotSize;
     UpdateGridSize(size);
   }
 
   void WaveGrid::UpdateGridSize(vec2 newSize)
   {
-    newSize -= dotSize;
-    columns = newSize.x / separation;
-    rows = newSize.y / separation;
+    newSize -= dotSize * 2;
+    columns = 1 + newSize.x / spacing;
+    rows = 1 + newSize.y / spacing;
+    vec2 grid = vec2(columns, rows);
 
-    spacing = newSize / vec2(columns, rows);
+    unusedSpace = newSize - (grid - 1) * spacing;
   }
 
   void WaveGrid::SetLayoutValues(float size, float separation)
   {
-    vec2 currentSize = spacing * vec2(columns, rows) + dotSize;
+    vec2 currentSize = (vec2(columns, rows) - 1) * spacing;
+    currentSize += unusedSpace;
+    currentSize += dotSize * 2;
     dotSize = size;
-    this->separation = separation;
+    spacing = separation;
     UpdateGridSize(currentSize);
   }
 
@@ -60,20 +62,22 @@ namespace wave_pool {
   
   void WaveGrid::DrawGrid()
   {
+    vec2 basePosition = origin + dotSize + unusedSpace / 2;
     for (int i = 0; i < columns; i++) {
       for (int j = 0; j < rows; j++) {
         vec2 point = vec2(i, j) * spacing;
-        point += origin;
+        point += basePosition;
         DrawCircle(point.x, point.y, dotSize, colour);
       }
     }
   }
   void WaveGrid::DrawWarpedGrid(std::function<vec2(vec2)> getOffset)
   {
+    vec2 basePosition = origin + dotSize + unusedSpace / 2;
     for (int i = 0; i < columns; i++) {
       for (int j = 0; j < rows; j++) {
         vec2 point = vec2(i, j) * spacing;
-        point += origin;
+        point += basePosition;
         point += getOffset(point);
         DrawCircle(point.x, point.y, dotSize, colour);
       }

@@ -35,8 +35,7 @@ namespace wave_pool {
     margin{margin}
   {
     this->margin = margin;
-    vec2 gridOrigin = vec2(margin) + dotRadius;
-    waveGrid = WaveGrid(gridOrigin, vec2(), dotSpacing, dotRadius, dotColour);
+    waveGrid = WaveGrid(vec2(margin), vec2(), dotSpacing, dotRadius, dotColour);
     OnWindowResized(screenSize);
   }
 
