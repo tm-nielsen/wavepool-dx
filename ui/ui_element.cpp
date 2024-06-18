@@ -18,6 +18,7 @@ namespace ui {
       UIElement(vec2, vec2);
 
       virtual void SetStyle(Color, float);
+      virtual void SetStyle(Color, Color, float);
       virtual void SetArea(rect);
       virtual vec2 GetCentrePosition();
       virtual void SetCentrePosition(vec2);
@@ -33,6 +34,11 @@ namespace ui {
   {
     normalColour = colour;
     borderThickness = thickness;
+  }
+
+  void UIElement::SetStyle(Color colour1, Color colour2, float thickness)
+  {
+    SetStyle(colour1, thickness);
   }
 
   void UIElement::SetArea(rect newArea)

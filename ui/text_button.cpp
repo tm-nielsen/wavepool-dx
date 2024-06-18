@@ -2,45 +2,45 @@
 #include "label.cpp"
 
 namespace ui {
-  class LabelledButton: public Button
+  class TextButton: public Button
   {
     private:
       Label label;
 
     public:
-      LabelledButton(rect);
-      LabelledButton(const char*, rect);
+      TextButton(rect);
+      TextButton(const char*, rect);
 
       void SetStyle(Color, Color, float);
       void SetArea(rect);
       void Draw();
   };
 
-  LabelledButton::LabelledButton(rect buttonArea = rect())
+  TextButton::TextButton(rect buttonArea = rect())
   {
     label = Label();
     SetArea(buttonArea);
   }
 
-  LabelledButton::LabelledButton(const char* labelText, rect buttonArea = rect())
+  TextButton::TextButton(const char* labelText, rect buttonArea = rect())
   {
     label = Label(labelText);
     SetArea(buttonArea);
   }
 
-  void LabelledButton::SetStyle(Color normal, Color hovered, float thickness)
+  void TextButton::SetStyle(Color normal, Color hovered, float thickness)
   {
     Button::SetStyle(normal, hovered, thickness, 0);
     label.SetStyle(normal);
   }
 
-  void LabelledButton::SetArea(rect area)
+  void TextButton::SetArea(rect area)
   {
     Button::SetArea(area);
     label.SetArea(area);
   }
 
-  void LabelledButton::Draw()
+  void TextButton::Draw()
   {
     Color drawColour = isHovered? hoveredColour: normalColour;
     float fontMargin = borderThickness * (isPressed? 3: 2);

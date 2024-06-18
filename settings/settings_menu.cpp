@@ -6,8 +6,9 @@
 #include "../utils/file_utils.cpp"
 #include "../ui/colour_entry_form.cpp"
 #include "../ui/slider.cpp"
-#include "../ui/labelled_button.cpp"
+#include "../ui/text_button.cpp"
 #include "../ui/toggle_button.cpp"
+#include "../ui/labelled_slider.cpp"
 
 namespace settings {
   using namespace ui;
@@ -17,17 +18,21 @@ namespace settings {
   {
     private:
       Settings* settings;
+      std::vector<UIElement*> elements;
 
-      Slider volumeSlider;
+      LabelledSlider volumeSlider;
+      LabelledSlider gridRadiusSlider;
+      LabelledSlider gridSpacingSlider;
 
+      ColourEntryForm mainColourForm;
       ColourEntryForm backgroundColourForm;
+      ColourEntryForm accentColourForm;
 
-      LabelledButton resetSettingsButton;
+      LabelledSlider marginSlider;
+      LabelledSlider borderThicknessSlider;
 
       ToggleButton toggleFpsButton;
-
-      std::vector<Button*> buttons;
-      std::vector<CompositeUIElement*> compositeElements;
+      TextButton resetSettingsButton;
 
       float margin;
       float spacing;
@@ -46,8 +51,16 @@ namespace settings {
       void OnWindowResized(vec2);
       void Draw();
 
+      void ApplyLoadedSettings();
+
       void SetVolume(float);
+      void SetGridRadius(float);
+      void SetGridSpacing(float);
+      void SetMainColour(Color);
       void SetBackgroundColour(Color);
+      void SetAccentColour(Color);
+      void SetMargin(float);
+      void SetBorderThickness(float);
       void ToggleShowFps();
       void ResetSettings();
   };
@@ -55,24 +68,57 @@ namespace settings {
   SettingsMenu::SettingsMenu(Settings* settings, vec2 screenSize, float margin, float spacing = 12):
     settings{settings}, margin{margin}, spacing{spacing}
   {
-    volumeSlider = Slider();
+    volumeSlider = LabelledSlider("Volume");
     volumeSlider.onHandleReleased = std::bind(SetVolume, this, _1);
+    elements.push_back(&volumeSlider);
+
+    gridRadiusSlider = LabelledSlider("Radius");
+    gridRadiusSlider.onHandleReleased = std::bind(SetGridRadius, this, _1);
+    elements.push_back(&gridRadiusSlider);
+
+    gridSpacingSlider = LabelledSlider("Spacing");
+    gridSpacingSlider.onHandleReleased = std::bind(SetGridSpacing, this, _1);
+    elements.push_back(&gridSpacingSlider);
+
+
+    mainColourForm = ColourEntryForm("Main:");
+    mainColourForm.onSubmit = std::bind(SetMainColour, this, _1);
+    elements.push_back(&mainColourForm);
 
     backgroundColourForm = ColourEntryForm("Bg:");
     backgroundColourForm.onSubmit = std::bind(SetBackgroundColour, this, _1);
+    elements.push_back(&backgroundColourForm);
 
-    compositeElements = {&volumeSlider, &backgroundColourForm};
+    accentColourForm = ColourEntryForm("Acc:");
+    accentColourForm.onSubmit = std::bind(SetAccentColour, this, _1);
+    elements.push_back(&accentColourForm);
+
+
+    marginSlider = LabelledSlider("Margin");
+    marginSlider.onHandleReleased = std::bind(SetMargin, this, _1);
+    elements.push_back(&marginSlider);
+
+    borderThicknessSlider = LabelledSlider("Line W");
+    marginSlider.onHandleReleased = std::bind(SetBorderThickness, this, _1);
+    elements.push_back(&borderThicknessSlider);
+
+
+    std::vector<CompositeUIElement*> compositeElements = {
+      &volumeSlider, &gridRadiusSlider, &gridSpacingSlider,
+      &marginSlider, &borderThicknessSlider,
+      &mainColourForm, &backgroundColourForm, &accentColourForm
+    };
     for (CompositeUIElement* elementPointer : compositeElements)
       elementPointer->BindCallbacks();
 
 
-    resetSettingsButton = LabelledButton("Reset to Default");
-    resetSettingsButton.onRelease = std::bind(ResetSettings, this);
-
     toggleFpsButton = ToggleButton();
     toggleFpsButton.onPress = std::bind(ToggleShowFps, this);
+    elements.push_back(&toggleFpsButton);
 
-    buttons = {&resetSettingsButton, &toggleFpsButton};
+    resetSettingsButton = TextButton("Reset to Default");
+    resetSettingsButton.onRelease = std::bind(ResetSettings, this);
+    elements.push_back(&resetSettingsButton);
 
     OnWindowResized(screenSize);
   }
@@ -81,25 +127,22 @@ namespace settings {
   {
     resetSettingsButton.LoadResources("");
     toggleFpsButton.LoadResources("resources/icons/close_icon.png");
-
-    for (CompositeUIElement* elementPointer : compositeElements)
-      elementPointer->LoadResources();
+    mainColourForm.LoadResources();
+    backgroundColourForm.LoadResources();
+    accentColourForm.LoadResources();
   }
 
   void SettingsMenu::UnloadResources()
   {
     toggleFpsButton.UnloadResources();
-
-    for (CompositeUIElement* elementPointer : compositeElements)
-      elementPointer->UnloadResources();
+    mainColourForm.UnloadResources();
+    backgroundColourForm.UnloadResources();
+    accentColourForm.UnloadResources();
   }
 
   void SettingsMenu::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
-    for (Button* buttonPointer : buttons)
-      buttonPointer->SetStyle(normalColour, hoverColour, thickness);
-
-    for (CompositeUIElement* elementPointer : compositeElements)
+    for (UIElement* elementPointer : elements)
       elementPointer->SetStyle(normalColour, hoverColour, thickness);
   }
 
@@ -110,48 +153,46 @@ namespace settings {
     waveGridSettingsModified = false;
 
     vec2 mousePosition = GetMousePosition();
-    for (Button* buttonPointer : buttons)
-      buttonPointer->Update(mousePosition);
-
-    for (CompositeUIElement* elementPointer : compositeElements)
+    for (UIElement* elementPointer : elements)
       elementPointer->Update(mousePosition);
   }
 
   void SettingsMenu::OnWindowResized(vec2 screenSize)
   {
-    rect placementRect = rect(vec2(2 * margin), vec2(margin / 2));
-    placementRect.size.x = screenSize.x - 4 * margin;
+    vec2 menuSize = screenSize - 4 * margin;
+    if (menuSize.y > menuSize.x)
+      menuSize.y = menuSize.x;
+    if (menuSize.x > menuSize.y * 1.4)
+      menuSize.x = menuSize.y * 1.4;
 
-    auto sliders = {&volumeSlider};
-    for (Slider* sliderPointer : sliders)
+    vec2 elementSize = vec2();
+    elementSize.x = menuSize.x;
+    elementSize.y = menuSize.y / (elements.size() + 4);
+
+    rect placementRect = rect(vec2(2 * margin), elementSize);
+    placementRect.origin += (screenSize - menuSize) / 2 - 2 * margin;
+    vec2 placementOffset = DOWN * (menuSize.y - elementSize.y) / (elements.size() - 1);
+
+    for (UIElement* elementPointer : elements)
     {
-      sliderPointer->SetShape(placementRect, vec2(margin / 2, margin));
-      placementRect.origin.y += 2 * margin + spacing;
+      elementPointer->SetArea(placementRect);
+      placementRect.origin += placementOffset;
     }
-
-    auto colourEntryForms = {&backgroundColourForm};
-    placementRect.size.y = 1.5 * margin;
-    for (ColourEntryForm* colourFormPointer : colourEntryForms)
-    {
-      colourFormPointer->SetArea(placementRect);
-      placementRect.origin.y += 1.5 * margin + spacing;
-    }
-
-    resetSettingsButton.SetArea(placementRect);
-
-    placementRect.origin.y += 2 * margin + spacing;
-    placementRect.size.x = placementRect.size.y;
-    toggleFpsButton.SetArea(placementRect);
-    // toggleFpsButton.SetArea(rect(vec2(400), vec2(40)));
   }
 
   void SettingsMenu::Draw() 
   {
-    for (Button* buttonPointer : buttons)
-      buttonPointer->Draw();
-
-    for (CompositeUIElement* elementPointer : compositeElements)
+    for (UIElement* elementPointer : elements)
       elementPointer->Draw();
+  }
+
+  void SettingsMenu::ApplyLoadedSettings()
+  {
+    volumeSlider.SetValue(settings->volume);
+    // set grid slider values
+    // set colour form values
+    // set window value sliders
+    toggleFpsButton.isToggled = settings->showFps;
   }
 
   void SettingsMenu::SetVolume(float sliderValue)
@@ -159,17 +200,39 @@ namespace settings {
     std::cout << "Setting Volume: " << sliderValue << "\n";
   }
 
+  void SettingsMenu::SetGridRadius(float sliderValue)
+  {
+
+  }
+
+  void SettingsMenu::SetGridSpacing(float sliderValue)
+  {
+
+  }
+
+  void SettingsMenu::SetMainColour(Color colour)
+  {
+
+  }
+
   void SettingsMenu::SetBackgroundColour(Color colour)
   {
-    // Color colour = utils::GetColourFromString(colourString);
+    
+  }
 
-    Vector4 colourVector = ColorNormalize(colour);
-    std::cout << "Setting Background Colour: (";
-    std::cout << colourVector.x << ", ";
-    std::cout << colourVector.y << ", ";
-    std::cout << colourVector.z << ", ";
-    std::cout << colourVector.w << ")\n";
-    coloursModified = true;
+  void SettingsMenu::SetAccentColour(Color colour)
+  {
+
+  }
+
+  void SettingsMenu::SetMargin(float sliderValue)
+  {
+
+  }
+
+  void SettingsMenu::SetBorderThickness(float sliderValue)
+  {
+
   }
 
   void SettingsMenu::ToggleShowFps()

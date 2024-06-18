@@ -144,6 +144,12 @@ namespace utils {
         return y;
       }
 
+      float GetSmallestComponent() {
+        if (x < y)
+          return x;
+        return y;
+      }
+
       vec2 RotatedAroundPoint(vec2 anchorPoint, float rotationDegrees) {
         vec2 offset = *this - anchorPoint;
         return anchorPoint + offset.Rotated(rotationDegrees);

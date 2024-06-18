@@ -1,6 +1,9 @@
 #include "button.cpp"
 
 namespace ui {
+#ifndef TOGGLE_BUTTON
+#define TOGGLE_BUTTON
+
   class ToggleButton: public Button
   {
     public:
@@ -22,4 +25,5 @@ namespace ui {
     if (isToggled)
       DrawTexture(colour);
   }
+#endif
 }

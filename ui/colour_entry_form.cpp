@@ -29,7 +29,7 @@ namespace ui {
       
       void SetStyle(Color, Color, float);
       void SetStyle(Color, Color, float, float, float);
-      void SetArea(rect, float);
+      void SetArea(rect);
       void Update(vec2);
       void OnTextAreaEdited(const char*);
       void OnTextAreaSubmitted(const char*);
@@ -54,7 +54,7 @@ namespace ui {
   {
     ColourEntryForm();
     label.SetText(labelText);
-    SetArea(area, 12);
+    SetArea(area);
   }
 
 
@@ -76,18 +76,21 @@ namespace ui {
 
   void ColourEntryForm::SetStyle(Color normal, Color hovered, float thickness)
   {
-    SetStyle(normal, hovered, thickness, 12, 0.5);
+    SetStyle(normal, hovered, thickness, thickness / 4, 0.5);
   }
   void ColourEntryForm::SetStyle(Color normal, Color hovered,
     float thickness, float fontMargin, float blinkPeriod)
   {
+    borderThickness = thickness;
     textArea.SetStyle(normal, hovered, thickness, fontMargin, blinkPeriod);
     submitButton.SetStyle(normal, hovered, thickness, 15);
     label.SetStyle(normal, fontMargin);
   }
 
-  void ColourEntryForm::SetArea(rect area, float spacing = 12)
+  void ColourEntryForm::SetArea(rect area)
   {
+    float spacing = 16;
+
     rect labelArea = area;
     labelArea.size.x /= 6;
     labelArea.origin.x -= spacing;

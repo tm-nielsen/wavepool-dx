@@ -3,6 +3,9 @@
 #include "drag_button.cpp"
 
 namespace ui {
+#ifndef SLIDER
+#define SLIDER
+
   class Slider: public CompositeUIElement
   {
     private:
@@ -18,8 +21,6 @@ namespace ui {
       Slider();
       Slider(rect, vec2);
       void BindCallbacks();
-      void LoadResources() {};
-      void UnloadResources() {};
 
       void SetStyle(Color, Color, float);
       void SetShape(rect, vec2);
@@ -101,4 +102,5 @@ namespace ui {
     backgroundRect.DrawRounded(borderThickness, normalColour);
     handle.Draw();
   }
+#endif
 }

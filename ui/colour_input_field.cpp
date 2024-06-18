@@ -35,7 +35,7 @@ namespace ui {
     Color prefixColour = isFocused? normalColour: colour;
     DrawText("#", textPosition.x, textPosition.y, fontSize, prefixColour);
 
-    textPosition += RIGHT * (MeasureText("#", fontSize) + margin);
+    textPosition += RIGHT * (MeasureText("#", fontSize) + margin * 4);
     DrawText(text.c_str(), textPosition.x, textPosition.y, fontSize, colour);
 
     return textPosition + RIGHT * MeasureText(text.c_str(), fontSize);
