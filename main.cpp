@@ -1,6 +1,4 @@
 #include "raylib.h"
-#include <string>
-#include "utils/vec2.cpp"
 #include "wave_pool/radial_instrument.cpp"
 #include "window_management/window_manager.cpp"
 #include "settings/settings_menu.cpp"
@@ -32,7 +30,7 @@ int main(void)
     SetMasterVolume(settings.volume);
 
 
-    Rectangle backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
+    rect backgroundRect = rect(margin, screenSize - (2 * margin));
 
     WindowManager windowManager = WindowManager(screenSize, vec2(500), margin);
     windowManager.LoadResources();
@@ -97,7 +95,7 @@ int main(void)
         BeginDrawing();
 
         ClearBackground(BLANK);
-        DrawRectangleRounded(backgroundRect, 0.075, 6, settings.backgroundColour);
+        backgroundRect.DrawRoundedFilled(backgroundColour, 0.075);
 
         windowManager.Draw();
         if (windowManager.settingsMenuIsOpen)
