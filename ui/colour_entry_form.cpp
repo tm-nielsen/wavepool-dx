@@ -90,11 +90,11 @@ namespace ui {
 
   void ColourEntryForm::SetArea(rect area)
   {
-    float spacing = 16;
+    float spacing = borderThickness * 1.5;
 
     rect labelArea = area;
     labelArea.size.x /= 6;
-    labelArea.origin.x -= spacing;
+    labelArea.origin.x -= borderThickness / 4;
     label.SetArea(labelArea);
     
     rect textEntryArea = area;
