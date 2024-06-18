@@ -118,8 +118,10 @@ int main(void)
             radialInstrument.DrawGuides(accentColour, lineThickness);
             wavePool.Draw();
         }
-        if (settings.showFps)
-            DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
+        if (settings.showFps) {
+            auto displayString = utils::GetString(1 / GetFrameTime()).c_str();
+            DrawText(displayString, lineThickness, lineThickness, margin - 2 * lineThickness, accentColour);
+        }
 
         EndDrawing();
     }
