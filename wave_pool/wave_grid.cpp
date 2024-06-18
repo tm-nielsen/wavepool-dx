@@ -21,6 +21,7 @@ namespace wave_pool {
     public:
       WaveGrid();
       WaveGrid(vec2, vec2, float, float, Color);
+      void SetOrigin(vec2);
       void UpdateGridSize(vec2);
       void SetLayoutValues(float, float);
       void SetColour(Color);
@@ -33,6 +34,11 @@ namespace wave_pool {
     origin{origin}, colour{colour}, dotSize{dotSize}, spacing{spacing}
   {
     UpdateGridSize(size);
+  }
+
+  void WaveGrid::SetOrigin(vec2 newOrigin)
+  {
+    origin = newOrigin;
   }
 
   void WaveGrid::UpdateGridSize(vec2 newSize)

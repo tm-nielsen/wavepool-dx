@@ -17,7 +17,6 @@ namespace window_management {
 
       std::vector<Button*> buttons;
 
-      float margin;
       float buttonSpacing;
 
     public:
@@ -25,12 +24,12 @@ namespace window_management {
       bool settingsMenuIsOpen = false;
       bool windowResized = false;
 
-      WindowManager(vec2, vec2, float, float);
+      WindowManager(vec2);
       void LoadResources();
       void UnloadResources();
       void SetStyle(Color, Color, float);
       void Update();
-      void OnWindowResized(vec2);
+      void OnWindowResized(vec2, float);
       void Draw();
 
       void CloseProgram();
@@ -39,8 +38,7 @@ namespace window_management {
       void ResizeWindow(vec2, vec2);
   };
 
-  WindowManager::WindowManager(vec2 size, vec2 minimumSize, float margin, float buttonSpacing = 12):
-    margin{margin}, buttonSpacing{buttonSpacing}
+  WindowManager::WindowManager(vec2 minimumSize)
   {
     closeProgramButton = Button();
     closeProgramButton.onRelease = std::bind(CloseProgram, this);
@@ -57,7 +55,6 @@ namespace window_management {
     resizeButton.holdKey = KEY_R;
 
     buttons = {&closeProgramButton, &toggleSettingsMenuButton, &moveButton, &resizeButton};
-    OnWindowResized(size);
   }
 
   void WindowManager::LoadResources()
@@ -76,6 +73,7 @@ namespace window_management {
 
   void WindowManager::SetStyle(Color normalColour, Color hoverColour, float thickness)
   {
+    buttonSpacing = thickness * 2;
     for (Button* buttonPointer : buttons)
       buttonPointer->SetStyle(normalColour, hoverColour, thickness);
   }
@@ -88,9 +86,9 @@ namespace window_management {
       buttonPointer->Update(mousePosition);
   }
 
-  void WindowManager::OnWindowResized(vec2 screenSize)
+  void WindowManager::OnWindowResized(vec2 screenSize, float margin)
   {
-    rect buttonRect = rect(vec2(screenSize.x - margin, 6.0), vec2(margin - 12));
+    rect buttonRect = rect(vec2(screenSize.x - margin, buttonSpacing / 2), vec2(margin - buttonSpacing));
     buttonRect.origin.x -= buttonSpacing;
     
     for (Button* buttonPointer : buttons)

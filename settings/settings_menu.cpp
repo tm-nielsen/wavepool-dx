@@ -33,22 +33,19 @@ namespace settings {
       LabelledToggleButton toggleFpsButton;
       TextButton resetSettingsButton;
 
-      float margin;
-      float spacing;
-
     public:
       bool styleSettingsModifed = false;
       bool marginSettingModified = false;
       bool waveGridSettingsModified = false;
       bool windowResized = false;
 
-      SettingsMenu(Settings*, vec2, float, float);
+      SettingsMenu(Settings*);
       void LoadResources();
       void UnloadResources();
 
       void SetStyle(Color, Color, float);
       void Update();
-      void OnWindowResized(vec2);
+      void OnWindowResized(vec2, float);
       void Draw();
 
       void ApplyLoadedSettings();
@@ -65,9 +62,10 @@ namespace settings {
       void ResetSettings();
   };
 
-  SettingsMenu::SettingsMenu(Settings* settings, vec2 screenSize, float margin, float spacing = 12):
-    settings{settings}, margin{margin}, spacing{spacing}
+  SettingsMenu::SettingsMenu(Settings* settings)
   {
+    this->settings = settings;
+
     volumeSlider = LabelledSlider("Volume");
     volumeSlider.onHandleReleased = std::bind(SetVolume, this, _1);
     elements.push_back(&volumeSlider);
@@ -122,7 +120,6 @@ namespace settings {
     resetSettingsButton.onRelease = std::bind(ResetSettings, this);
     elements.push_back(&resetSettingsButton);
 
-    OnWindowResized(screenSize);
     ApplyLoadedSettings();
   }
 
@@ -160,13 +157,14 @@ namespace settings {
       elementPointer->Update(mousePosition);
   }
 
-  void SettingsMenu::OnWindowResized(vec2 screenSize)
+  void SettingsMenu::OnWindowResized(vec2 screenSize, float margin)
   {
     settings->windowWidth = screenSize.x;
     settings->windowHeight = screenSize.y;
     settings->SaveToFile();
 
-    vec2 menuSize = screenSize - 4 * margin;
+    margin *= 1.4;
+    vec2 menuSize = screenSize - 2 * margin;
     if (menuSize.y > menuSize.x)
       menuSize.y = menuSize.x;
     if (menuSize.x > menuSize.y * 1.4)
@@ -176,8 +174,8 @@ namespace settings {
     elementSize.x = menuSize.x;
     elementSize.y = menuSize.y / (elements.size() + 4);
 
-    rect placementRect = rect(vec2(2 * margin), elementSize);
-    placementRect.origin += (screenSize - menuSize) / 2 - 2 * margin;
+    rect placementRect = rect(vec2(margin), elementSize);
+    placementRect.origin += (screenSize - menuSize) / 2 - margin;
     vec2 placementOffset = DOWN * (menuSize.y - elementSize.y) / (elements.size() - 1);
 
     for (UIElement* elementPointer : elements)

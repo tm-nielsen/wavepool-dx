@@ -29,7 +29,7 @@ namespace wave_pool {
       float margin;
       float centralKeyHalfWidth;
 
-      bool isMajor;
+      bool isMajor = true;
       
       float GetPitch(vec2);
       float GetPanning(vec2);
@@ -42,23 +42,19 @@ namespace wave_pool {
       Music InitializeMusicStream(const char*, float);
 
     public:
-      RadialInstrument(RippleSpawner*, vec2, float, float);
+      RadialInstrument(RippleSpawner*, vec2, float);
       void LoadSounds();
       void UnloadSounds();
       void Update();
-      void OnWindowResized(vec2);
+      void OnWindowResized(vec2, float);
       void DrawGuides(Color, float);
       void OnClick(vec2);
   };
 
-  RadialInstrument::RadialInstrument(RippleSpawner* rippleSpawner, vec2 screenSize,
-    float innerRadius, float margin): rippleSpawner{rippleSpawner}
+  RadialInstrument::RadialInstrument(RippleSpawner* rippleSpawner, vec2 screenSize, float margin)
   {
-    isMajor = true;
-
-    this->margin = margin;
-
-    OnWindowResized(screenSize);
+    this->rippleSpawner = rippleSpawner;
+    OnWindowResized(screenSize, margin);
   }
 
   void RadialInstrument::LoadSounds()
@@ -119,8 +115,9 @@ namespace wave_pool {
   }
 
 
-  void RadialInstrument::OnWindowResized(vec2 screenSize)
+  void RadialInstrument::OnWindowResized(vec2 screenSize, float margin)
   {
+    this->margin = margin;
     centre = screenSize / 2;
     centralKeyHalfWidth = screenSize.GetLargestComponent() / 12;
     centralKeyRect = rect(centre - centralKeyHalfWidth, centralKeyHalfWidth * 2);

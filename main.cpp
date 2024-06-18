@@ -32,34 +32,37 @@ int main(void)
 
     rect backgroundRect = rect(margin, screenSize - (2 * margin));
 
-    WindowManager windowManager = WindowManager(screenSize, vec2(500), margin);
+    WindowManager windowManager = WindowManager(vec2(500));
     windowManager.LoadResources();
     windowManager.SetStyle(accentColour, mainColour, lineThickness);
+    windowManager.OnWindowResized(screenSize, margin);
 
-    SettingsMenu settingsMenu = SettingsMenu(&settings, screenSize, margin);
+    SettingsMenu settingsMenu = SettingsMenu(&settings);
     settingsMenu.LoadResources();
     settingsMenu.SetStyle(accentColour, mainColour, lineThickness);
+    settingsMenu.OnWindowResized(screenSize, margin);
 
     WavePool wavePool = WavePool(screenSize, margin,
         settings.dotSize, settings.dotSpacing, mainColour);
 
     RippleSpawner rippleSpawner = RippleSpawner(&wavePool, 30);
 
-    RadialInstrument radialInstrument= RadialInstrument(&rippleSpawner, screenSize, 100, margin);
+    RadialInstrument radialInstrument= RadialInstrument(&rippleSpawner, screenSize, margin);
     radialInstrument.LoadSounds();
 
 
     // Main Game Loop
     while(!WindowShouldClose())
     {
-        if (windowManager.windowResized || settingsMenu.windowResized)
+        if (windowManager.windowResized || settingsMenu.windowResized || settingsMenu.marginSettingModified)
         {
-            vec2 newScreenSize = vec2(GetScreenWidth(), GetScreenHeight());
-            backgroundRect = rect(margin, newScreenSize - (2 * margin)).ToRectangle();
-            windowManager.OnWindowResized(newScreenSize);
-            settingsMenu.OnWindowResized(newScreenSize);
-            radialInstrument.OnWindowResized(newScreenSize);
-            wavePool.OnWindowResized(newScreenSize);
+            screenSize = vec2(GetScreenWidth(), GetScreenHeight());
+            margin = settings.margin;
+            backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
+            windowManager.OnWindowResized(screenSize, margin);
+            settingsMenu.OnWindowResized(screenSize, margin);
+            radialInstrument.OnWindowResized(screenSize, margin);
+            wavePool.OnWindowResized(screenSize, margin);
         }
 
         if (settingsMenu.styleSettingsModifed)
@@ -70,7 +73,9 @@ int main(void)
             lineThickness = settings.lineThickness;
 
             windowManager.SetStyle(accentColour, mainColour, lineThickness);
+            windowManager.OnWindowResized(screenSize, margin);
             settingsMenu.SetStyle(accentColour, mainColour, lineThickness);
+            settingsMenu.OnWindowResized(screenSize, margin);
             wavePool.SetColour(mainColour);
         }
         if (settingsMenu.waveGridSettingsModified)
