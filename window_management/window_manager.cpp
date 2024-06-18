@@ -140,6 +140,5 @@ namespace window_management {
     SetWindowPosition(windowPosition.x, windowPosition.y);
 
     windowResized = true;
-    OnWindowResized(windowSize);
   }
 }

@@ -21,9 +21,11 @@ namespace wave_pool {
     public:
       WaveGrid();
       WaveGrid(vec2, vec2, float, float, Color);
+      void UpdateGridSize(vec2);
+      void SetLayoutValues(float, float);
+      void SetColour(Color);
       void DrawGrid();
       void DrawWarpedGrid(std::function<vec2(vec2)>);
-      void UpdateGridSize(vec2);
   };
   
   WaveGrid::WaveGrid(): origin{vec2()}, colour{WHITE}, dotSize{5}, separation{10}, columns{0}, rows{0} {}
@@ -41,6 +43,19 @@ namespace wave_pool {
     rows = newSize.y / separation;
 
     spacing = newSize / vec2(columns, rows);
+  }
+
+  void WaveGrid::SetLayoutValues(float size, float separation)
+  {
+    vec2 currentSize = spacing * vec2(columns, rows) + dotSize;
+    dotSize = size;
+    this->separation = separation;
+    UpdateGridSize(currentSize);
+  }
+
+  void WaveGrid::SetColour(Color newColour)
+  {
+    colour = newColour;
   }
   
   void WaveGrid::DrawGrid()

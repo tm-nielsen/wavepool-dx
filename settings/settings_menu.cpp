@@ -153,6 +153,7 @@ namespace settings {
     styleSettingsModifed = false;
     marginSettingModified = false;
     waveGridSettingsModified = false;
+    windowResized = false;
 
     vec2 mousePosition = GetMousePosition();
     for (UIElement* elementPointer : elements)
@@ -161,6 +162,10 @@ namespace settings {
 
   void SettingsMenu::OnWindowResized(vec2 screenSize)
   {
+    settings->windowWidth = screenSize.x;
+    settings->windowHeight = screenSize.y;
+    settings->SaveToFile();
+
     vec2 menuSize = screenSize - 4 * margin;
     if (menuSize.y > menuSize.x)
       menuSize.y = menuSize.x;
@@ -216,7 +221,7 @@ namespace settings {
 
   void SettingsMenu::SetGridSpacing(float sliderValue)
   {
-    float spacing = 2 + sliderValue * 28;
+    float spacing = 4 + sliderValue * 36;
     settings->dotSpacing = spacing;
     settings->SaveToFile();
     

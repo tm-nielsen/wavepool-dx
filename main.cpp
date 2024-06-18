@@ -17,6 +17,11 @@ int main(void)
     vec2 screenSize = vec2(settings.windowWidth, settings.windowHeight);
     float margin = settings.margin;
 
+    Color mainColour = settings.mainColour;
+    Color backgroundColour = settings.backgroundColour;
+    Color guideColour = settings.guideColour;
+    float lineThickness = settings.lineThickness;
+
 
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -31,14 +36,14 @@ int main(void)
 
     WindowManager windowManager = WindowManager(screenSize, vec2(500), margin);
     windowManager.LoadResources();
-    windowManager.SetStyle(settings.guideColour, settings.mainColour, 6);
+    windowManager.SetStyle(guideColour, mainColour, lineThickness);
 
     SettingsMenu settingsMenu = SettingsMenu(&settings, screenSize, margin);
     settingsMenu.LoadResources();
-    settingsMenu.SetStyle(settings.guideColour, settings.mainColour, 6);
+    settingsMenu.SetStyle(guideColour, mainColour, lineThickness);
 
     WavePool wavePool = WavePool(screenSize, margin,
-        settings.dotSize, settings.dotSpacing, settings.mainColour);
+        settings.dotSize, settings.dotSpacing, mainColour);
 
     RippleSpawner rippleSpawner = RippleSpawner(&wavePool, 30);
 
@@ -49,13 +54,30 @@ int main(void)
     // Main Game Loop
     while(!WindowShouldClose())
     {
-        if (windowManager.windowResized)
+        if (windowManager.windowResized || settingsMenu.windowResized)
         {
             vec2 newScreenSize = vec2(GetScreenWidth(), GetScreenHeight());
             backgroundRect = rect(margin, newScreenSize - (2 * margin)).ToRectangle();
+            windowManager.OnWindowResized(newScreenSize);
+            settingsMenu.OnWindowResized(newScreenSize);
             radialInstrument.OnWindowResized(newScreenSize);
             wavePool.OnWindowResized(newScreenSize);
-            settingsMenu.OnWindowResized(newScreenSize);
+        }
+
+        if (settingsMenu.styleSettingsModifed)
+        {
+            mainColour = settings.mainColour;
+            backgroundColour = settings.backgroundColour;
+            guideColour = settings.guideColour;
+            lineThickness = settings.lineThickness;
+
+            windowManager.SetStyle(guideColour, mainColour, lineThickness);
+            settingsMenu.SetStyle(guideColour, mainColour, lineThickness);
+            wavePool.SetColour(mainColour);
+        }
+        if (settingsMenu.waveGridSettingsModified)
+        {
+            wavePool.SetGridLayout(settings.dotSize, settings.dotSpacing);
         }
 
         windowManager.Update();
@@ -84,10 +106,11 @@ int main(void)
         }
         else
         {
-            radialInstrument.DrawGuides(settings.guideColour, 6);
+            radialInstrument.DrawGuides(guideColour, lineThickness);
             wavePool.Draw();
-            DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
         }
+        if (settings.showFps)
+            DrawText(std::to_string(1 / GetFrameTime()).c_str(), 5, 5, 24, BLACK);
 
         EndDrawing();
     }

@@ -25,6 +25,8 @@ namespace wave_pool {
       void Update();
       void RemoveDeadRipples();
       void OnWindowResized(vec2);
+      void SetColour(Color);
+      void SetGridLayout(float, float);
       void Draw();
       void AddRipple(Ripple);
   };
@@ -70,6 +72,16 @@ namespace wave_pool {
   void WavePool::OnWindowResized(vec2 screenSize)
   {
     waveGrid.UpdateGridSize(screenSize - margin * 2);
+  }
+
+  void WavePool::SetColour(Color colour)
+  {
+    waveGrid.SetColour(colour);
+  }
+
+  void WavePool::SetGridLayout(float size, float separation)
+  {
+    waveGrid.SetLayoutValues(size, separation);
   }
 
   void WavePool::Draw()
