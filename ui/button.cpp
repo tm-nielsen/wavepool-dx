@@ -41,16 +41,15 @@ namespace ui {
 
   void Button::LoadResources(const char* texturePath)
   {
-    if (FileExists(texturePath))
+    if (FileExists(texturePath)) {
       texture = LoadTexture(texturePath);
-    else
-      texture = LoadTextureFromImage(GenImageColor(12, 12, BLANK));
-    textureScale = area.size.y / texture.height;
+      textureScale = area.size.y / texture.height;
+    }
   }
 
   void Button::UnloadResources()
   {
-    UnloadTexture(texture);
+    if (texture.id > 0) UnloadTexture(texture);
   }
 
   void Button::SetStyle(Color normal, Color hovered, float thickness, float rotation = -90)
@@ -62,7 +61,8 @@ namespace ui {
   void Button::SetArea(rect area)
   {
     UIElement::SetArea(area);
-    textureScale = area.size.y / texture.height;
+    if (texture.id > 0)
+      textureScale = area.size.y / texture.height;
   }
 
 
@@ -128,6 +128,9 @@ namespace ui {
 
   void Button::DrawTexture(Color colour)
   {
+    if (texture.id <= 0)
+      return;
+
     float finalTextureScale = textureScale;
     vec2 centre = area.origin + area.size / 2;
     vec2 texturePosition = area.origin.RotatedAroundPoint(centre, textureRotation);
