@@ -28,7 +28,7 @@ namespace settings {
       ColourEntryForm accentColourForm;
 
       LabelledSlider marginSlider;
-      LabelledSlider thicknessSlider;
+      LabelledSlider lineThicknessSlider;
 
       LabelledToggleButton toggleFpsButton;
       TextButton resetSettingsButton;
@@ -57,7 +57,9 @@ namespace settings {
       void SetBackgroundColour(Color);
       void SetAccentColour(Color);
       void SetMargin(float);
-      void SetBorderThickness(float);
+      void SaveMargin(float);
+      void SetLineThickness(float);
+      void SaveLineThickness(float);
       void ToggleShowFps(bool);
       void ResetSettings();
   };
@@ -93,12 +95,14 @@ namespace settings {
 
 
     marginSlider = LabelledSlider("Margin");
-    marginSlider.onHandleReleased = std::bind(SetMargin, this, _1);
+    marginSlider.onValueChanged = std::bind(SetMargin, this, _1);
+    marginSlider.onHandleReleased = std::bind(SaveMargin, this, _1);
     elements.push_back(&marginSlider);
 
-    thicknessSlider = LabelledSlider("Line W");
-    thicknessSlider.onHandleReleased = std::bind(SetBorderThickness, this, _1);
-    elements.push_back(&thicknessSlider);
+    lineThicknessSlider = LabelledSlider("Line W");
+    lineThicknessSlider.onValueChanged = std::bind(SetLineThickness, this, _1);
+    lineThicknessSlider.onHandleReleased = std::bind(SaveLineThickness, this, _1);
+    elements.push_back(&lineThicknessSlider);
 
 
     toggleFpsButton = LabelledToggleButton("Show FPS");
@@ -109,7 +113,7 @@ namespace settings {
     std::vector<CompositeUIElement*> compositeElements = {
       &volumeSlider, &toggleFpsButton,
       &dotSizeSlider, &dotSpacingSlider,
-      &marginSlider, &thicknessSlider,
+      &marginSlider, &lineThicknessSlider,
       &mainColourForm, &backgroundColourForm, &accentColourForm
     };
     for (CompositeUIElement* elementPointer : compositeElements)
@@ -159,10 +163,6 @@ namespace settings {
 
   void SettingsMenu::OnWindowResized(vec2 screenSize, float margin)
   {
-    settings->windowWidth = screenSize.x;
-    settings->windowHeight = screenSize.y;
-    settings->SaveToFile();
-
     margin *= 1.4;
     vec2 menuSize = screenSize - 2 * margin;
     if (menuSize.y > menuSize.x)
@@ -208,7 +208,7 @@ namespace settings {
     sliderValue = Slider::GetNormalizedValueFromRange(settings->margin, 20, 100);
     marginSlider.SetValue(sliderValue);
     sliderValue = Slider::GetNormalizedValueFromRange(settings->lineThickness, 0, 10);
-    thicknessSlider.SetValue(sliderValue);
+    lineThicknessSlider.SetValue(sliderValue);
 
     toggleFpsButton.SetIsToggled(settings->showFps);
   }
@@ -266,17 +266,23 @@ namespace settings {
   void SettingsMenu::SetMargin(float sliderValue)
   {
     settings->margin = Slider::MapNormalizedValueToRange(sliderValue, 20, 100);
-    settings->SaveToFile();
-
     marginSettingModified = true;
   }
+  void SettingsMenu::SaveMargin(float sliderValue)
+  {
+    SetMargin(sliderValue);
+    settings->SaveToFile();
+  }
 
-  void SettingsMenu::SetBorderThickness(float sliderValue)
+  void SettingsMenu::SetLineThickness(float sliderValue)
   {
     settings->lineThickness = Slider::MapNormalizedValueToRange(sliderValue, 0, 10);
-    settings->SaveToFile();
-
     styleSettingsModifed = true;
+  }
+  void SettingsMenu::SaveLineThickness(float sliderValue)
+  {
+    SetLineThickness(sliderValue);
+    settings->SaveToFile();
   }
 
   void SettingsMenu::ToggleShowFps(bool isToggled)

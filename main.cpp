@@ -58,6 +58,12 @@ int main(void)
         {
             screenSize = vec2(GetScreenWidth(), GetScreenHeight());
             margin = settings.margin;
+            if (windowManager.windowResized)
+            {
+                settings.windowWidth = screenSize.x;
+                settings.windowHeight = screenSize.y;
+                settings.SaveToFile();
+            }
             backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
             windowManager.OnWindowResized(screenSize, margin);
             settingsMenu.OnWindowResized(screenSize, margin);
