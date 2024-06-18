@@ -99,7 +99,7 @@ namespace settings {
     elements.push_back(&marginSlider);
 
     borderThicknessSlider = LabelledSlider("Line W");
-    marginSlider.onHandleReleased = std::bind(SetBorderThickness, this, _1);
+    borderThicknessSlider.onHandleReleased = std::bind(SetBorderThickness, this, _1);
     elements.push_back(&borderThicknessSlider);
 
 
