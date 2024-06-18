@@ -108,12 +108,14 @@ namespace ui {
 
   float Slider::MapNormalizedValueToRange(float normalizedValue, float rangeStart, float rangeEnd)
   {
+    normalizedValue = Clamp(normalizedValue, 0, 1);
     return rangeStart + normalizedValue * (rangeEnd - rangeStart);
   }
 
   float Slider::GetNormalizedValueFromRange(float mappedValue, float rangeStart, float rangeEnd)
   {
-    return (mappedValue - rangeStart) / (rangeEnd - rangeStart);
+    float unmappedValue = (mappedValue - rangeStart) / (rangeEnd - rangeStart);
+    return Clamp(unmappedValue, 0, 1);
   }
 #endif
 }
