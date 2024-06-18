@@ -103,8 +103,6 @@ namespace ui {
 
     rect submitButtonRect = area;
     submitButtonRect.size.x = area.size.y;
-    submitButtonRect.size /= 2;
-    submitButtonRect.origin.y += area.size.y / 4;
     submitButtonRect.origin.x = area.origin.x + area.size.x - submitButtonRect.size.x;
     submitButton.SetArea(submitButtonRect);
 
