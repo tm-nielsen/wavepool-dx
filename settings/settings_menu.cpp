@@ -37,9 +37,10 @@ namespace settings {
       float spacing;
 
     public:
-      bool coloursModified = false;
-      bool windowSettingsModified = false;
+      bool styleSettingsModifed = false;
+      bool marginSettingModified = false;
       bool waveGridSettingsModified = false;
+      bool windowResized = false;
 
       SettingsMenu(Settings*, vec2, float, float);
       void LoadResources();
@@ -122,6 +123,7 @@ namespace settings {
     elements.push_back(&resetSettingsButton);
 
     OnWindowResized(screenSize);
+    ApplyLoadedSettings();
   }
 
   void SettingsMenu::LoadResources()
@@ -148,8 +150,8 @@ namespace settings {
 
   void SettingsMenu::Update()
   {
-    coloursModified = false;
-    windowSettingsModified = false;
+    styleSettingsModifed = false;
+    marginSettingModified = false;
     waveGridSettingsModified = false;
 
     vec2 mousePosition = GetMousePosition();
@@ -197,51 +199,87 @@ namespace settings {
 
   void SettingsMenu::SetVolume(float sliderValue)
   {
-    std::cout << "Setting Volume: " << sliderValue << "\n";
+    settings->volume = sliderValue;
+    settings->SaveToFile();
+
+    SetMasterVolume(sliderValue);
   }
 
   void SettingsMenu::SetGridRadius(float sliderValue)
   {
+    float radius = 1 + sliderValue * 19;
+    settings->dotSize = radius;
+    settings->SaveToFile();
 
+    waveGridSettingsModified = true;
   }
 
   void SettingsMenu::SetGridSpacing(float sliderValue)
   {
-
+    float spacing = 2 + sliderValue * 28;
+    settings->dotSpacing = spacing;
+    settings->SaveToFile();
+    
+    waveGridSettingsModified = true;
   }
 
   void SettingsMenu::SetMainColour(Color colour)
   {
+    settings->mainColour = colour;
+    settings->SaveToFile();
 
+    styleSettingsModifed = true;
   }
 
   void SettingsMenu::SetBackgroundColour(Color colour)
   {
-    
+    settings->backgroundColour = colour;
+    settings->SaveToFile();
+
+    styleSettingsModifed = true;
   }
 
   void SettingsMenu::SetAccentColour(Color colour)
   {
+    settings->guideColour = colour;
+    settings->SaveToFile();
 
+    styleSettingsModifed = true;
   }
 
   void SettingsMenu::SetMargin(float sliderValue)
   {
+    settings->margin = 10 + sliderValue * 90;
+    settings->SaveToFile();
 
+    marginSettingModified = true;
   }
 
   void SettingsMenu::SetBorderThickness(float sliderValue)
   {
+    settings->lineThickness = 0 + sliderValue * 10;
+    settings->SaveToFile();
 
+    styleSettingsModifed = true;
   }
 
   void SettingsMenu::ToggleShowFps(bool isToggled)
   {
-    std::cout << "Setting show fps to: " << isToggled << std::endl;
+    settings->showFps = isToggled;
+    settings->SaveToFile();
   }
 
   void SettingsMenu::ResetSettings()
   {
-    std::cout << "Resetting Settings..." << std::endl;
+    *settings = Settings();
+    settings->SaveToFile();
+    ApplyLoadedSettings();
+
+    styleSettingsModifed = true;
+    marginSettingModified = true;
+    waveGridSettingsModified = true;
+
+    SetWindowSize(settings->windowWidth, settings->windowHeight);
+    windowResized = true;
   }
 }
