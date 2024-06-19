@@ -24,6 +24,7 @@ namespace wave_pool {
       Sound majorTones [4];
       Sound minorTones [4];
       Sound switchTone;
+      Sound* heldTone;
 
       vec2 centre;
       float margin;
@@ -111,7 +112,10 @@ namespace wave_pool {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
       OnClick(mousePosition);
     else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    {
       rippleSpawner->SpawnHeldRipple(mousePosition);
+      SetSoundPan(*heldTone, GetPanning(mousePosition));
+    }
   }
 
 
@@ -140,6 +144,7 @@ namespace wave_pool {
   {
     PlaySound(switchTone);
     rippleSpawner->SpawnCentreRipple(centre);
+    heldTone = &switchTone;
 
     isMajor = !isMajor;
     StopMusicStream(*currentAmbiance);
@@ -155,12 +160,13 @@ namespace wave_pool {
       toneIndex--;
 
     Sound* tones = isMajor? majorTones: minorTones;
-    Sound tone = Sound(tones[toneIndex]);
-    SetSoundPan(tone, GetPanning(position));
+    Sound* tone = &tones[toneIndex];
+    SetSoundPan(*tone, GetPanning(position));
     float pitchScale = GetPitch(position);
-    SetSoundPitch(tone, pitchScale);
+    SetSoundPitch(*tone, pitchScale);
 
-    PlaySound(tone);
+    PlaySound(*tone);
+    heldTone = tone;
     rippleSpawner->SpawnRipple(position, pitchScale);
   }
 
@@ -213,7 +219,7 @@ namespace wave_pool {
 
   float RadialInstrument::GetPanning(vec2 position)
   {
-    float panning = (position.x - centre.x) / centre.x;
+    float panning = (centre.x - position.x) / centre.x;
     float normalized_panning = Clamp((panning + 1) / 2, 0, 1);
     return normalized_panning;
   }
