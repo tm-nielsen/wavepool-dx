@@ -132,8 +132,7 @@ namespace wave_pool {
   void RadialInstrument::OnClick(vec2 position)
   {
     vec2 offset = position - centre;
-    float centre_distance = offset.Length();
-
+    
     if (centralKeyRect.ContainsPoint(position))
       OnCentreClick();
     else
