@@ -20,9 +20,9 @@ namespace window_management {
       float buttonSpacing;
 
     public:
-      bool shouldExitProgram = false;
-      bool settingsMenuIsOpen = false;
-      bool windowResized = false;
+      BoundCallback onCloseButtonPressed;
+      BoundCallback onSettingsButtonPressed;
+      BoundVec2Callback onWindowResized;
 
       WindowManager(vec2);
       void LoadResources();
@@ -80,7 +80,6 @@ namespace window_management {
 
   void WindowManager::Update()
   {
-    windowResized = false;
     vec2 mousePosition = GetMousePosition();
     for (Button* buttonPointer : buttons)
       buttonPointer->Update(mousePosition);
@@ -107,12 +106,12 @@ namespace window_management {
 
   void WindowManager::CloseProgram()
   {
-    shouldExitProgram = true;
+    if (onCloseButtonPressed) onCloseButtonPressed();
   }
 
   void WindowManager::ToggleSettingsMenu()
   {
-    settingsMenuIsOpen = !settingsMenuIsOpen;
+    if (onSettingsButtonPressed) onSettingsButtonPressed();
   }
 
   void WindowManager::MoveWindow(vec2 offset)
@@ -137,6 +136,6 @@ namespace window_management {
     SetWindowSize(windowSize.x, windowSize.y);
     SetWindowPosition(windowPosition.x, windowPosition.y);
 
-    windowResized = true;
+    if (onWindowResized) onWindowResized(windowSize);
   }
 }

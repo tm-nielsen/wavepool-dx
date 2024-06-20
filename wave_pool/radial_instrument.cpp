@@ -30,6 +30,9 @@ namespace wave_pool {
       float margin;
       float centralKeyHalfWidth;
 
+      Color colour;
+      float lineThickness;
+
       bool isMajor = true;
       
       float GetPitch(vec2);
@@ -47,8 +50,9 @@ namespace wave_pool {
       void LoadSounds();
       void UnloadSounds();
       void Update();
+      void SetStyle(Color, float);
       void OnWindowResized(vec2, float);
-      void DrawGuides(Color, float);
+      void Draw();
       void OnClick(vec2);
   };
 
@@ -119,6 +123,12 @@ namespace wave_pool {
   }
 
 
+  void RadialInstrument::SetStyle(Color newColour, float thickness)
+  {
+    colour = newColour;
+    lineThickness = thickness;
+  }
+
   void RadialInstrument::OnWindowResized(vec2 screenSize, float margin)
   {
     this->margin = margin;
@@ -170,23 +180,23 @@ namespace wave_pool {
   }
 
 
-  void RadialInstrument::DrawGuides(Color colour, float thickness)
+  void RadialInstrument::Draw()
   {
     if (IsHorizontallyFlat())
-      centralKeyRect.DrawHorizontalBorders(thickness, colour);
+      centralKeyRect.DrawHorizontalBorders(lineThickness, colour);
     else if (IsVerticallyFlat())
-      centralKeyRect.DrawVerticalBorders(thickness, colour);
+      centralKeyRect.DrawVerticalBorders(lineThickness, colour);
     else
-      centralKeyRect.DrawRounded(thickness, colour);
+      centralKeyRect.DrawRounded(lineThickness, colour);
 
     for (rect keyRect : keyRects)
     {
       if (IsHorizontallyFlat())
-        keyRect.DrawVerticalBorders(thickness, colour);
+        keyRect.DrawVerticalBorders(lineThickness, colour);
       else if (IsVerticallyFlat())
-        keyRect.DrawHorizontalBorders(thickness, colour);
+        keyRect.DrawHorizontalBorders(lineThickness, colour);
       else
-        keyRect.DrawRounded(thickness, colour);
+        keyRect.DrawRounded(lineThickness, colour);
     }
 
     float radialStep = TAU / toneCount;
@@ -197,7 +207,9 @@ namespace wave_pool {
       direction = direction.Normalized();
       vec2 lineStart = centre + direction * centralKeyHalfWidth;
       vec2 lineEnd = centre + direction * (centre - margin);
-      DrawLineEx(lineStart.ToVector2(), lineEnd.ToVector2(), thickness, colour);
+      Vector2 startPos = lineStart.ToVector2();
+      Vector2 endPos = lineEnd.ToVector2();
+      DrawLineEx(startPos, endPos, lineThickness, colour);
     }
   }
 

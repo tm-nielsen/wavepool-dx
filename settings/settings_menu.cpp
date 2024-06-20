@@ -34,10 +34,10 @@ namespace settings {
       TextButton resetSettingsButton;
 
     public:
-      bool styleSettingsModifed = false;
-      bool marginSettingModified = false;
-      bool waveGridSettingsModified = false;
-      bool windowResized = false;
+      BoundCallback onStyleModified;
+      BoundCallback onMarginModified;
+      BoundCallback onWaveGridLayoutModified;
+      BoundCallback onReset;
 
       SettingsMenu(Settings*);
       void LoadResources();
@@ -151,11 +151,6 @@ namespace settings {
 
   void SettingsMenu::Update()
   {
-    styleSettingsModifed = false;
-    marginSettingModified = false;
-    waveGridSettingsModified = false;
-    windowResized = false;
-
     vec2 mousePosition = GetMousePosition();
     for (UIElement* elementPointer : elements)
       elementPointer->Update(mousePosition);
@@ -227,7 +222,7 @@ namespace settings {
     settings->dotSize = radius;
     settings->SaveToFile();
 
-    waveGridSettingsModified = true;
+    if (onWaveGridLayoutModified) onWaveGridLayoutModified();
   }
 
   void SettingsMenu::SetGridSpacing(float sliderValue)
@@ -236,7 +231,7 @@ namespace settings {
     settings->dotSpacing = spacing;
     settings->SaveToFile();
     
-    waveGridSettingsModified = true;
+    if (onWaveGridLayoutModified) onWaveGridLayoutModified();
   }
 
   void SettingsMenu::SetMainColour(Color colour)
@@ -244,7 +239,7 @@ namespace settings {
     settings->mainColour = colour;
     settings->SaveToFile();
 
-    styleSettingsModifed = true;
+    if (onStyleModified) onStyleModified();
   }
 
   void SettingsMenu::SetBackgroundColour(Color colour)
@@ -252,7 +247,7 @@ namespace settings {
     settings->backgroundColour = colour;
     settings->SaveToFile();
 
-    styleSettingsModifed = true;
+    if (onStyleModified) onStyleModified();
   }
 
   void SettingsMenu::SetAccentColour(Color colour)
@@ -260,13 +255,14 @@ namespace settings {
     settings->accentColour = colour;
     settings->SaveToFile();
 
-    styleSettingsModifed = true;
+    if (onStyleModified) onStyleModified();
   }
 
   void SettingsMenu::SetMargin(float sliderValue)
   {
     settings->margin = Slider::MapNormalizedValueToRange(sliderValue, 20, 100);
-    marginSettingModified = true;
+
+    if (onMarginModified) onMarginModified();
   }
   void SettingsMenu::SaveMargin(float sliderValue)
   {
@@ -277,7 +273,8 @@ namespace settings {
   void SettingsMenu::SetLineThickness(float sliderValue)
   {
     settings->lineThickness = Slider::MapNormalizedValueToRange(sliderValue, 0, 10);
-    styleSettingsModifed = true;
+
+    if (onStyleModified) onStyleModified();
   }
   void SettingsMenu::SaveLineThickness(float sliderValue)
   {
@@ -297,11 +294,8 @@ namespace settings {
     settings->SaveToFile();
     ApplyLoadedSettings();
 
-    styleSettingsModifed = true;
-    marginSettingModified = true;
-    waveGridSettingsModified = true;
-
     SetWindowSize(settings->windowWidth, settings->windowHeight);
-    windowResized = true;
+    
+    if (onReset) onReset();
   }
 }

@@ -7,6 +7,7 @@
 
 namespace wave_pool {
   using namespace utils;
+  using namespace std::placeholders;
 
   class WavePool
   {
@@ -14,12 +15,10 @@ namespace wave_pool {
       WaveGrid waveGrid;
       std::vector<Ripple> ripples;
 
-      const std::function<vec2(vec2)> getOffset = [this](vec2 point) -> vec2 {return GetOffset(point);};
       vec2 GetOffset(vec2);
 
     public:
       WavePool(vec2, float, float, float, Color);
-      ~WavePool();
       void Update();
       void RemoveDeadRipples();
       void OnWindowResized(vec2, float);
@@ -31,14 +30,9 @@ namespace wave_pool {
 
   WavePool::WavePool(vec2 screenSize, float margin, float dotRadius, float dotSpacing, Color dotColour)
   {
+    ripples = std::vector<Ripple>();
     waveGrid = WaveGrid(vec2(margin), vec2(), dotSpacing, dotRadius, dotColour);
     OnWindowResized(screenSize, margin);
-  }
-
-  WavePool::~WavePool()
-  {
-    delete &waveGrid;
-    ripples.clear();
   }
 
   void WavePool::Update()
@@ -82,6 +76,7 @@ namespace wave_pool {
 
   void WavePool::Draw()
   {
+    auto getOffset = std::bind(&WavePool::GetOffset, this, std::placeholders::_1);
     waveGrid.DrawWarpedGrid(getOffset);
   }
 
