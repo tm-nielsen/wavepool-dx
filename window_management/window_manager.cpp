@@ -23,6 +23,7 @@ namespace window_management {
       BoundCallback onCloseButtonPressed;
       BoundCallback onSettingsButtonPressed;
       BoundVec2Callback onWindowResized;
+      BoundVec2Callback onWindowResizeCompleted;
 
       WindowManager(vec2);
       void LoadResources();
@@ -36,6 +37,7 @@ namespace window_management {
       void ToggleSettingsMenu();
       void MoveWindow(vec2);
       void ResizeWindow(vec2, vec2);
+      void NotifyWindowResizeCompletion(vec2);
   };
 
   WindowManager::WindowManager(vec2 minimumSize)
@@ -52,6 +54,7 @@ namespace window_management {
 
     resizeButton = DragButton(UP);
     resizeButton.onDrag = std::bind(ResizeWindow, this, _1, minimumSize);
+    resizeButton.onDragFinished = std::bind(NotifyWindowResizeCompletion, this, _1);
     resizeButton.holdKey = KEY_R;
 
     buttons = {&closeProgramButton, &toggleSettingsMenuButton, &moveButton, &resizeButton};
@@ -137,5 +140,11 @@ namespace window_management {
     SetWindowPosition(windowPosition.x, windowPosition.y);
 
     if (onWindowResized) onWindowResized(windowSize);
+  }
+
+  void WindowManager::NotifyWindowResizeCompletion(vec2 offset)
+  {
+    vec2 windowSize = vec2(GetScreenWidth(), GetScreenHeight());
+    if (onWindowResizeCompleted) onWindowResizeCompleted(windowSize);
   }
 }

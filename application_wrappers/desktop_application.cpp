@@ -20,7 +20,7 @@ namespace application_wrappers {
       void DrawFpsCounter();
       void ToggleSettingsMenu();
       void CloseWindow();
-      void OnWindowResized(vec2);
+      void SaveWindowSize(vec2);
       void Resize(vec2);
       void UpdateMargin();
       void UpdateStyle();
@@ -82,7 +82,8 @@ namespace application_wrappers {
       {
         windowManager->onSettingsButtonPressed = std::bind(ToggleSettingsMenu, this);
         windowManager->onCloseButtonPressed = std::bind(CloseWindow, this);
-        windowManager->onWindowResized = std::bind(OnWindowResized, this, _1);
+        windowManager->onWindowResized = std::bind(Resize, this, _1);
+        windowManager->onWindowResizeCompleted = std::bind(SaveWindowSize, this, _1);
 
         settingsMenu->onStyleModified = std::bind(UpdateStyle, this);
         settingsMenu->onMarginModified = std::bind(UpdateMargin, this);
@@ -151,12 +152,11 @@ namespace application_wrappers {
     shouldExit = true;
   }
 
-  void DesktopApplication::OnWindowResized(vec2 windowSize)
+  void DesktopApplication::SaveWindowSize(vec2 windowSize)
   {
     settings.windowWidth = windowSize.x;
     settings.windowHeight = windowSize.y;
     settings.SaveToFile();
-    Resize(windowSize);
   }
 
   void DesktopApplication::Resize(vec2 screenSize)
