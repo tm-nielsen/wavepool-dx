@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <iostream>
 #include "vec2.cpp"
 
 namespace utils {
