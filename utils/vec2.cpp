@@ -1,5 +1,4 @@
 #include <math.h>
-#include <iostream>
 #include "raymath.h"
 
 namespace utils {

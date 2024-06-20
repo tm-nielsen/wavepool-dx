@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include <functional>
 #include <vector>
-#include <iostream>
 #include "settings.cpp"
 #include "../utils/file_utils.cpp"
 #include "../ui/colour_entry_form.cpp"

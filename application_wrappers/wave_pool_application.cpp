@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include "../wave_pool/radial_instrument.cpp"
-#include <iostream>
 
 using namespace wave_pool;
 using namespace utils;
@@ -35,7 +34,6 @@ namespace application_wrappers {
         float lineThickness = 6,
         float dotSize = 6, float dotSpacing = 16)
       {
-        std::cout << "\n\nInitializing application\n\n\n";
         this->backgroundColour = backgroundColour;
 
         InitWindow(screenSize.x, screenSize.y, "Wave Pool");
