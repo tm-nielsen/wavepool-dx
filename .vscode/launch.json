@@ -4,7 +4,7 @@
       "name": "Windows Build and Debug",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/builds/win64/a.exe",
+      "program": "${workspaceFolder}/builds/win64/wave_pool.exe",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}/builds/win64",
@@ -27,7 +27,7 @@
       "request": "launch",
       "reAttach": true,
       "url": "http://localhost:8080",
-      "file": "${workspaceFolder}/builds/web/index.html",
+      "file": "${workspaceFolder}/builds/web/wave_pool.html",
       "preLaunchTask": "build web project"
     }
   ]
