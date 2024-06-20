@@ -20,7 +20,7 @@ namespace settings {
     int windowHeight = 600;
 
     float margin = 40;
-    float lineThickness = 6;
+    float lineThickness = 4;
 
     Color backgroundColour = utils::GetColourFromString("#3e6990cc");
     Color accentColour = utils::GetColourFromString("#000000dd");
