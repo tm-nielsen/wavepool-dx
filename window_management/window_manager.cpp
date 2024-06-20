@@ -29,7 +29,7 @@ namespace window_management {
       void UnloadResources();
       void SetStyle(Color, Color, float);
       void Update();
-      void OnWindowResized(vec2, float);
+      void Resize(vec2, float);
       void Draw();
 
       void CloseProgram();
@@ -85,7 +85,7 @@ namespace window_management {
       buttonPointer->Update(mousePosition);
   }
 
-  void WindowManager::OnWindowResized(vec2 screenSize, float margin)
+  void WindowManager::Resize(vec2 screenSize, float margin)
   {
     rect buttonRect = rect(vec2(screenSize.x - margin, buttonSpacing / 2), vec2(margin - buttonSpacing));
     buttonRect.origin.x -= buttonSpacing;

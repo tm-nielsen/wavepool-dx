@@ -45,7 +45,7 @@ namespace settings {
 
       void SetStyle(Color, Color, float);
       void Update();
-      void OnWindowResized(vec2, float);
+      void Resize(vec2, float);
       void Draw();
 
       void ApplyLoadedSettings();
@@ -156,7 +156,7 @@ namespace settings {
       elementPointer->Update(mousePosition);
   }
 
-  void SettingsMenu::OnWindowResized(vec2 screenSize, float margin)
+  void SettingsMenu::Resize(vec2 screenSize, float margin)
   {
     margin *= 1.4;
     vec2 menuSize = screenSize - 2 * margin;

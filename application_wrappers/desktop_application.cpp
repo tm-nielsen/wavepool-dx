@@ -68,12 +68,12 @@ namespace application_wrappers {
         windowManager = new WindowManager(vec2(500));
         windowManager->LoadResources();
         windowManager->SetStyle(accentColour, mainColour, lineThickness);
-        windowManager->OnWindowResized(screenSize, margin);
+        windowManager->Resize(screenSize, margin);
 
         settingsMenu = new SettingsMenu(&settings);
         settingsMenu->LoadResources();
         settingsMenu->SetStyle(accentColour, mainColour, lineThickness);
-        settingsMenu->OnWindowResized(screenSize, margin);
+        settingsMenu->Resize(screenSize, margin);
 
         BindCallbacks();
       }
@@ -164,10 +164,10 @@ namespace application_wrappers {
     float margin = settings.margin;
     backgroundRect = rect(margin, screenSize - (2 * margin)).ToRectangle();
     
-    windowManager->OnWindowResized(screenSize, margin);
-    settingsMenu->OnWindowResized(screenSize, margin);
-    radialInstrument->OnWindowResized(screenSize, margin);
-    wavePool->OnWindowResized(screenSize, margin);
+    windowManager->Resize(screenSize, margin);
+    settingsMenu->Resize(screenSize, margin);
+    radialInstrument->Resize(screenSize, margin);
+    wavePool->Resize(screenSize, margin);
   }
 
   void DesktopApplication::UpdateMargin()
@@ -186,9 +186,9 @@ namespace application_wrappers {
     float lineThickness = settings.lineThickness;
 
     windowManager->SetStyle(accentColour, mainColour, lineThickness);
-    windowManager->OnWindowResized(windowSize, margin);
+    windowManager->Resize(windowSize, margin);
     settingsMenu->SetStyle(accentColour, mainColour, lineThickness);
-    settingsMenu->OnWindowResized(windowSize, margin);
+    settingsMenu->Resize(windowSize, margin);
     wavePool->SetColour(mainColour);
   }
 

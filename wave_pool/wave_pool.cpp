@@ -21,7 +21,7 @@ namespace wave_pool {
       WavePool(vec2, float, float, float, Color);
       void Update();
       void RemoveDeadRipples();
-      void OnWindowResized(vec2, float);
+      void Resize(vec2, float);
       void SetColour(Color);
       void SetGridLayout(float, float);
       void Draw();
@@ -32,7 +32,7 @@ namespace wave_pool {
   {
     ripples = std::vector<Ripple>();
     waveGrid = WaveGrid(vec2(margin), vec2(), dotSpacing, dotRadius, dotColour);
-    OnWindowResized(screenSize, margin);
+    Resize(screenSize, margin);
   }
 
   void WavePool::Update()
@@ -58,7 +58,7 @@ namespace wave_pool {
     }
   }
 
-  void WavePool::OnWindowResized(vec2 screenSize, float margin)
+  void WavePool::Resize(vec2 screenSize, float margin)
   {
     waveGrid.SetOrigin(vec2(margin));
     waveGrid.UpdateGridSize(screenSize - margin * 2);

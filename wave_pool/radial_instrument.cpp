@@ -51,7 +51,7 @@ namespace wave_pool {
       void UnloadSounds();
       void Update();
       void SetStyle(Color, float);
-      void OnWindowResized(vec2, float);
+      void Resize(vec2, float);
       void Draw();
       void OnClick(vec2);
   };
@@ -59,7 +59,7 @@ namespace wave_pool {
   RadialInstrument::RadialInstrument(RippleSpawner* rippleSpawner, vec2 screenSize, float margin)
   {
     this->rippleSpawner = rippleSpawner;
-    OnWindowResized(screenSize, margin);
+    Resize(screenSize, margin);
   }
 
   void RadialInstrument::LoadSounds()
@@ -129,7 +129,7 @@ namespace wave_pool {
     lineThickness = thickness;
   }
 
-  void RadialInstrument::OnWindowResized(vec2 screenSize, float margin)
+  void RadialInstrument::Resize(vec2 screenSize, float margin)
   {
     this->margin = margin;
     centre = screenSize / 2;
