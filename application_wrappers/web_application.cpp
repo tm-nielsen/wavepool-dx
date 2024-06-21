@@ -1,6 +1,5 @@
 #include "wave_pool_application.cpp"
 #include <emscripten.h>
-#include <iostream>
 
 namespace application_wrappers {
   EM_JS(int, GetDocumentWidth, (), {

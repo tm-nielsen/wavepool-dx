@@ -54,6 +54,7 @@ namespace wave_pool {
       void Resize(vec2, float);
       void Draw();
       void OnClick(vec2);
+      void OnHold(vec2);
   };
 
   RadialInstrument::RadialInstrument(RippleSpawner* rippleSpawner, vec2 screenSize, float margin)
@@ -110,16 +111,6 @@ namespace wave_pool {
   {
     UpdateMusicStream(staticAmbiance);
     UpdateMusicStream(*currentAmbiance);
-
-    auto mousePosition = GetMousePosition();
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-      OnClick(mousePosition);
-    else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-    {
-      rippleSpawner->SpawnHeldRipple(mousePosition);
-      SetSoundPan(*heldTone, GetPanning(mousePosition));
-    }
   }
 
 
@@ -177,6 +168,12 @@ namespace wave_pool {
     PlaySound(*tone);
     heldTone = tone;
     rippleSpawner->SpawnRipple(position, pitchScale);
+  }
+
+  void RadialInstrument::OnHold(vec2 mousePosition)
+  {
+    rippleSpawner->SpawnHeldRipple(mousePosition);
+    SetSoundPan(*heldTone, GetPanning(mousePosition));
   }
 
 

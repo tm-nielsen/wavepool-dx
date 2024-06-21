@@ -40,6 +40,7 @@ namespace application_wrappers {
         SetTargetFPS(60);
         InitAudioDevice();
         SetMasterVolume(volume);
+        SetGesturesEnabled(GESTURE_TAP);
         
         wavePool = new WavePool(screenSize, margin, dotSize, dotSpacing, mainColour);
 
@@ -64,6 +65,29 @@ namespace application_wrappers {
 
       virtual void Update()
       {
+        int touchCount = GetTouchPointCount();
+        if (touchCount > 0) {
+          if (GetGestureDetected() == GESTURE_TAP) {
+            vec2 tapPosition = GetTouchPosition(0);
+            radialInstrument->OnClick(tapPosition);
+          }
+          else {
+            for (int i = 0; i < touchCount; i++) {
+              vec2 touchPosition = GetTouchPosition(i);
+              radialInstrument->OnHold(touchPosition);
+            }
+          }
+        }
+        else {
+          vec2 mousePosition = GetMousePosition();
+          if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            radialInstrument->OnClick(mousePosition);
+          }
+          else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            radialInstrument->OnHold(mousePosition);
+          }
+        }
+
         radialInstrument->Update();
         wavePool->Update();
       }

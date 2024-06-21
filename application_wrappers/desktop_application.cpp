@@ -106,8 +106,7 @@ namespace application_wrappers {
             settingsMenu->Update();
         }
         else {
-            radialInstrument->Update();
-            wavePool->Update();
+            WavePoolApplication::Update();
         }
       }
 
