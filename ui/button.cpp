@@ -11,6 +11,7 @@ namespace ui {
       float textureScale;
       float hoverRotation;
       float textureRotation = 0;
+      bool hasLoadedTexture = false;
       bool canPress;
 
     public:
@@ -44,12 +45,16 @@ namespace ui {
     if (FileExists(texturePath)) {
       texture = LoadTexture(texturePath);
       textureScale = area.size.y / texture.height;
+      hasLoadedTexture = true;
     }
   }
 
   void Button::UnloadResources()
   {
-    if (texture.id > 0) UnloadTexture(texture);
+    if (hasLoadedTexture) {
+      UnloadTexture(texture);
+      hasLoadedTexture = false;
+    }
   }
 
   void Button::SetStyle(Color normal, Color hovered, float thickness, float rotation = -90)
@@ -128,7 +133,7 @@ namespace ui {
 
   void Button::DrawTexture(Color colour)
   {
-    if (texture.id <= 0)
+    if (!hasLoadedTexture)
       return;
 
     float finalTextureScale = textureScale;
