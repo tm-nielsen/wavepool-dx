@@ -190,6 +190,7 @@ namespace application_wrappers {
     settingsMenu->SetStyle(accentColour, mainColour, lineThickness);
     settingsMenu->Resize(windowSize, margin);
     wavePool->SetColour(mainColour);
+    radialInstrument->SetStyle(accentColour, lineThickness);
   }
 
   void DesktopApplication::UpdateWaveGridLayout()
