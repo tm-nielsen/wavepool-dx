@@ -22,9 +22,9 @@ namespace settings {
     float margin = 40;
     float lineThickness = 4;
 
-    Color backgroundColour = utils::GetColourFromString("#3e6990cc");
-    Color accentColour = utils::GetColourFromString("#000000dd");
-    Color mainColour = utils::GetColourFromString("#c0fdfb");
+    Color mainColour = GetColor(0x6fa79dff);
+    Color backgroundColour = GetColor(0x404044aa);
+    Color accentColour = GetColor(0x404044ff);
 
     float dotSize = 6;
     float dotSpacing = 16;

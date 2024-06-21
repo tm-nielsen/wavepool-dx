@@ -28,9 +28,9 @@ namespace application_wrappers {
         vec2 screenSize = vec2(600),
         float margin = 40,
         float volume = 0.5,
-        Color mainColour = GetColor(0xc0fdfbff),
-        Color backgroundColour = GetColor(0x3e6990cc),
-        Color accentColour = GetColor(0x000000dd),
+        Color mainColour = GetColor(0x6fa79dff),
+        Color backgroundColour = GetColor(0x404044ff),
+        Color accentColour = GetColor(0x606066ff),
         float lineThickness = 6,
         float dotSize = 6, float dotSpacing = 16)
       {
