@@ -65,9 +65,9 @@ namespace wave_pool {
 
   void RadialInstrument::LoadSounds()
   {
-    staticAmbiance = InitializeMusicStream("resources/Ambiance/WavegameAmbienceStaticStereo.ogg", 0.1);
-    majorAmbiance = InitializeMusicStream("resources/Ambiance/WavegameAmbianceMajorStereo.ogg", 0.35);
-    minorAmbiance = InitializeMusicStream("resources/Ambiance/WavegameAmbianceMinorStereo.ogg", 0.35);
+    staticAmbiance = InitializeMusicStream("resources/Ambiance/Static.ogg", 0.1);
+    majorAmbiance = InitializeMusicStream("resources/Ambiance/MajorAmbiance.ogg", 0.35);
+    minorAmbiance = InitializeMusicStream("resources/Ambiance/MinorAmbiance.ogg", 0.35);
 
     PlayMusicStream(staticAmbiance);
     currentAmbiance = &majorAmbiance;
@@ -83,7 +83,7 @@ namespace wave_pool {
     minorTones[2] = LoadSound("resources/Pings/MinorSets/MinorWaveC.ogg");
     minorTones[3] = LoadSound("resources/Pings/MinorSets/MinorWaveD.ogg");
 
-    switchTone = LoadSound("resources/Ambiance/WavegamePingSplashZone.ogg");
+    switchTone = LoadSound("resources/Ambiance/SwitchTone.ogg");
   }
 
   Music RadialInstrument::InitializeMusicStream(const char *path, float volume = 1)
