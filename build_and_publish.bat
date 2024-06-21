@@ -13,6 +13,7 @@ if exist index.html ren index.html wave_pool.html
 @REM build for windows
 cd ../..
 call g++ -o builds/win64/wave_pool.exe main.cpp -lraylib -lgdi32 -lwinmm -mwindows
+call rcedit builds/win64/wave_pool.exe --set-icon application_icon.ico
 
 @REM push windows build
 call butler push --ignore settings.txt builds/win64 klungore/wave-pool-dx:windows
